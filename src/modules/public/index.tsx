@@ -1,7 +1,7 @@
-import PublicAuthentication from "./pages/Authentication";
-import PublicPerkaraBanding from "./pages/Perkara";
+import PublicHomePage from "./pages/HomePage";
+import PublicPerkaraPage from "./pages/PerkaraPage";
 
 export default {
-	PublicAuthentication,
-	PublicPerkaraBanding,
+	PublicHomePage,
+	PublicPerkaraPage,
 };

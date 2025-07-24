@@ -19,8 +19,8 @@ function AppRouter() {
 
 			<Route element={<PublicLayout />}>
 				<Route
-					path={AppRoutes.PublicAuthentication.path}
-					element={<Public.PublicAuthentication />}
+					path={AppRoutes.PublicHome.path}
+					element={<Public.PublicHomePage />}
 				/>
 			</Route>
 		</Routes>

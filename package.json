@@ -10,13 +10,14 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"@heroui/input-otp": "^2.1.23",
 		"@heroui/react": "^2.8.1",
+		"@hookform/resolvers": "^5.1.1",
 		"@tailwindcss/vite": "^4.1.11",
 		"axios": "^1.11.0",
-		"framer-motion": "^12.23.7",
+		"framer-motion": "^12.23.9",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",
+		"react-hook-form": "^7.61.1",
 		"react-icons": "^5.5.0",
 		"react-redux": "^9.2.0",
 		"react-router-dom": "^7.7.0",

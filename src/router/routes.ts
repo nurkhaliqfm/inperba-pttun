@@ -6,7 +6,7 @@ const AppRoutes = {
 	},
 
 	// NOTE: Public Route
-	PublicAuthentication: {
+	PublicHome: {
 		path: "/",
 		label: "Informasi Perkara Banding PTTUN Makassar",
 	},

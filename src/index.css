@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @plugin './hero.ts';
 
-@source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@source '../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
 @custom-variant dark (&:is(.dark *));
 
 @theme {
@@ -12,4 +12,16 @@
 	--color-public-color-1: oklch(0.306 0.004 288.3);
 	--color-public-color-2: oklch(0.424 0.002 267.7);
 	--color-public-color-3: oklch(0.605 0.007 266.3);
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+	-moz-appearance: textfield;
 }
