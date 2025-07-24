@@ -21,7 +21,7 @@ const PublicHeader = () => {
 	return (
 		<header
 			className={cn(
-				"flex fixed justify-center h-16 w-full transition-all duration-150",
+				"flex fixed z-50 justify-center h-16 w-full transition-all duration-150",
 				!isScrolled ? "bg-public-primary/0" : "bg-public-primary"
 			)}>
 			<div className="flex w-full justify-between items-center gap-2 px-4 py-9 max-w-6xl">
