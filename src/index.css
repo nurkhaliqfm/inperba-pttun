@@ -1,0 +1,15 @@
+@import "tailwindcss";
+@plugin './hero.ts';
+
+@source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+	--color-public-primary: oklch(0.182 0.041 264.8);
+	--color-public-primary-transparent: oklch(0.182 0.041 264.8 / 0.7);
+	--color-public-secondary: oklch(1 0.002 104);
+	--color-public-accent: oklch(0.764 0.235 120.9);
+	--color-public-color-1: oklch(0.306 0.004 288.3);
+	--color-public-color-2: oklch(0.424 0.002 267.7);
+	--color-public-color-3: oklch(0.605 0.007 266.3);
+}
