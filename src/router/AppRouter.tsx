@@ -22,6 +22,14 @@ function AppRouter() {
 					path={AppRoutes.PublicHome.path}
 					element={<Public.PublicHomePage />}
 				/>
+				<Route
+					path={AppRoutes.PublicValidateTokenHome.path}
+					element={<Public.PublicValidateTokenPage />}
+				/>
+				<Route
+					path={AppRoutes.PublicPerkara.path}
+					element={<Public.PublicPerkaraPage />}
+				/>
 			</Route>
 		</Routes>
 	);

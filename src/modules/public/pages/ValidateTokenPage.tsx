@@ -1,29 +1,22 @@
-import { SearchPerkaraFieldConfig } from "@/constant/public";
+import { ValidationOTPFieldConfig } from "@/constant/public";
 import { generateZodSchema } from "@/utils/getZodScheme";
-import { Button, Form, Input } from "@heroui/react";
+import { Button, Form, InputOtp } from "@heroui/react";
 import { useState } from "react";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { HiMagnifyingGlass, HiOutlineDocumentText } from "react-icons/hi2";
 import { getOTPAccess } from "../service/publicService";
-import {
-	Table,
-	TableHeader,
-	TableColumn,
-	TableBody,
-	TableRow,
-	TableCell,
-} from "@heroui/table";
-
 import { toast } from "react-toastify";
 import BlockInvalidInputChar from "@/utils/blockInvalidInput";
+import { BsShieldLockFill } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
+import AppRoutes from "@/router/routes";
 
-const PublicPerkaraPage = () => {
+const PublicValidateTokenPage = () => {
+	const navigate = useNavigate();
 	const [isLoading, setIsLoading] = useState(false);
-	const [isPerkaraFound, setIsPerkaraFound] = useState(false);
 
-	const formZodSchema = generateZodSchema(SearchPerkaraFieldConfig);
+	const formZodSchema = generateZodSchema(ValidationOTPFieldConfig);
 
 	const {
 		register,
@@ -35,6 +28,7 @@ const PublicPerkaraPage = () => {
 	});
 
 	function onSubmit(values: z.infer<typeof formZodSchema>) {
+		console.log(values);
 		setIsLoading(true);
 
 		const { phone } = values;
@@ -46,7 +40,7 @@ const PublicPerkaraPage = () => {
 					toast.success(data.message, {
 						autoClose: 1000,
 						onClose: () => {
-							setIsPerkaraFound(true);
+							navigate(AppRoutes.PublicPerkara.path);
 						},
 					});
 				} else {
@@ -76,36 +70,34 @@ const PublicPerkaraPage = () => {
 			<section className="flex-1">
 				<header>
 					<p className="text-public-secondary text-center text-xl font-bold">
-						INFORMASI KAPAN PERKARA BANDING DIPUTUS
-					</p>
-					<p className="text-public-secondary text-center text-medium font-medium">
-						PENGADILAN TINGGI TATA USAHA NEGARA MAKASSAR
+						VERIFIKASI AKSES INFORMASI PERKARA BANDING
 					</p>
 				</header>
 
-				{!isPerkaraFound ? (
+				<section>
+					<div className="flex justify-center items-center mt-10 mb-6">
+						<BsShieldLockFill size={100} className="text-success" />
+					</div>
+
+					<p className="text-public-secondary text-center text-sm font-medium">
+						Masukkan Kode OTP
+					</p>
 					<Form
-						className="my-10 flex-row justify-center items-baseline"
+						className="mb-10 justify-center items-center"
 						onSubmit={handleSubmit(onSubmit)}>
-						{SearchPerkaraFieldConfig.map((ff) => {
+						{ValidationOTPFieldConfig.map((ff) => {
 							const name = ff.name as keyof z.infer<typeof formZodSchema>;
 							return (
-								<Input
+								<InputOtp
 									key={name}
+									length={6}
 									{...register(name)}
 									className="max-w-xs"
 									variant="flat"
 									color="success"
-									isClearable
-									labelPlacement="outside"
+									label={`Masukkan ${ff.label}`}
 									type="number"
-									placeholder={`Masukkan ${ff.label}`}
 									onKeyDown={BlockInvalidInputChar}
-									startContent={
-										<p className="flex justify-center items-center gap-2">
-											<HiOutlineDocumentText className="pointer-events-none shrink-0" />
-										</p>
-									}
 									size="lg"
 									errorMessage={errors[name]?.message}
 									isInvalid={!!errors[name]?.message}
@@ -137,52 +129,17 @@ const PublicPerkaraPage = () => {
 										/>
 									</svg>
 								}
-								startContent={!isLoading && <HiMagnifyingGlass />}
-								className="mt-4"
 								color="success"
 								size="lg"
 								type="submit">
-								Cari
+								Validasi OTP
 							</Button>
 						</div>
 					</Form>
-				) : (
-					<Table
-						className="my-10"
-						aria-label="Table Data Perkara Banding Diputus"
-						color="success">
-						<TableHeader>
-							<TableColumn>TANGGAL PENDAFTARAN</TableColumn>
-							<TableColumn>JENIS PERKARA</TableColumn>
-							<TableColumn>NOMOR PERKARA</TableColumn>
-							<TableColumn>PARA PIHAK</TableColumn>
-							<TableColumn>SIDANG PUTUSAN</TableColumn>
-						</TableHeader>
-						<TableBody>
-							<TableRow key="1">
-								<TableCell>2025-01-07</TableCell>
-								<TableCell>Lain-Lain</TableCell>
-								<TableCell>1/B/2025/PT.TUN.BJM</TableCell>
-								<TableCell>
-									<div className="flex flex-col my-2">
-										<p className="text-xs">Pembanding:</p>
-										<p className="font-bold">Budianto</p>
-									</div>
-									<div className="flex flex-col my-2">
-										<p className="text-xs">Terbanding:</p>
-										<p className="font-bold">
-											KEPALA KEPOLISIAN KALIMANTAN BARAT
-										</p>
-									</div>
-								</TableCell>
-								<TableCell>2025-02-04, 2025-02-04</TableCell>
-							</TableRow>
-						</TableBody>
-					</Table>
-				)}
+				</section>
 			</section>
 		</section>
 	);
 };
 
-export default PublicPerkaraPage;
+export default PublicValidateTokenPage;

@@ -10,6 +10,10 @@ const AppRoutes = {
 		path: "/",
 		label: "Informasi Perkara Banding PTTUN Makassar",
 	},
+	PublicValidateTokenHome: {
+		path: "/validate-token",
+		label: "Informasi Perkara Banding PTTUN Makassar",
+	},
 	PublicPerkara: {
 		path: "/info-perkara-banding",
 		label: "Perkara Banding | INPERBA PTTUN Makassar",

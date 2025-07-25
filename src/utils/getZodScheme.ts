@@ -28,6 +28,14 @@ export const generateZodSchema = (fields: FieldConfig[]) => {
 							message: "Phone must start with 8 and be valid",
 						});
 					break;
+				case "otp":
+					fieldSchema = z
+						.string()
+						.length(6, { message: "OTP must be 6 digits" })
+						.regex(/^\d{6}$/, {
+							message: "Phone must start with 8 and be valid",
+						});
+					break;
 				case "select":
 					fieldSchema = z.string();
 					break;

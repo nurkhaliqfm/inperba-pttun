@@ -30,7 +30,7 @@ const PublicHeader = () => {
 					src={Logo}
 					alt="cafe U"
 					width={150}
-					onClick={() => navigate(AppRoutes.PublicAuthentication.path)}
+					onClick={() => navigate(AppRoutes.PublicHome.path)}
 				/>
 			</div>
 		</header>

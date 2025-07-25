@@ -40,7 +40,7 @@ const PublicHomePage = () => {
 					toast.success(data.message, {
 						autoClose: 1000,
 						onClose: () => {
-							navigate(AppRoutes.PublicPerkara.path);
+							navigate(AppRoutes.PublicValidateTokenHome.path);
 						},
 					});
 				} else {
