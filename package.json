@@ -12,6 +12,7 @@
 	"dependencies": {
 		"@heroui/react": "^2.8.1",
 		"@hookform/resolvers": "^5.1.1",
+		"@reduxjs/toolkit": "^2.8.2",
 		"@tailwindcss/vite": "^4.1.11",
 		"axios": "^1.11.0",
 		"framer-motion": "^12.23.9",
@@ -22,6 +23,7 @@
 		"react-redux": "^9.2.0",
 		"react-router-dom": "^7.7.0",
 		"react-toastify": "^11.0.5",
+		"redux": "^5.0.1",
 		"redux-persist": "^6.0.0",
 		"zod": "^4.0.8"
 	},
