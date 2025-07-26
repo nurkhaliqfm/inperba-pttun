@@ -29,7 +29,7 @@ const PublicHeader = () => {
 					className="text-delivery-accent cursor-pointer"
 					src={Logo}
 					alt="cafe U"
-					width={150}
+					width={180}
 					onClick={() => navigate(AppRoutes.PublicHome.path)}
 				/>
 			</div>

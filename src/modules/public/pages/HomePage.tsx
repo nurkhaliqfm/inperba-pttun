@@ -140,7 +140,33 @@ const PublicHomePage = () => {
 						</Button>
 					</div>
 				</Form>
+
+				<section className="flex justify-center">
+					<div className="grid grid-cols-2 gap-16">
+						<section className="flex flex-col gap-y-2 items-center text-public-secondary">
+							<p className="font-bold text-4xl">22</p>
+							<div className="h-0.5 w-6 bg-public-accent"></div>
+							<p className="text-xs font-thin">Perkara Terdaftar</p>
+						</section>
+						<section className="flex flex-col gap-y-2 items-center text-public-secondary">
+							<p className="font-bold text-4xl">16</p>
+							<div className="h-0.5 w-6 bg-public-accent"></div>
+							<p className="text-xs font-thin">Perkara Putus</p>
+						</section>
+						<section className="flex flex-col gap-y-2 items-center text-public-secondary">
+							<p className="font-bold text-4xl">22</p>
+							<div className="h-0.5 w-6 bg-public-accent"></div>
+							<p className="text-xs font-thin">Sisa Perkara</p>
+						</section>
+						<section className="flex flex-col gap-y-2 items-center text-public-secondary">
+							<p className="font-bold text-4xl">72.73%</p>
+							<div className="h-0.5 w-6 bg-public-accent"></div>
+							<p className="text-xs font-thin">Rasio Perkara</p>
+						</section>
+					</div>
+				</section>
 			</section>
+
 			<aside className="flex flex-col max-w-[24rem] mx-auto">
 				<Image src={SidangImage} isZoomed loading="lazy" />
 				<p className="text-public-secondary text-center font-thin">

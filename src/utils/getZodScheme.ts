@@ -22,19 +22,16 @@ export const generateZodSchema = (fields: FieldConfig[]) => {
 					fieldSchema = z
 						.string()
 						.trim()
-						.min(9, { message: "Phone number is too short" })
-						.max(15, { message: "Phone number is too long" })
+						.min(9, { message: "Phone number is too short (min 9 digits)" })
+						.max(15, { message: "Phone number is too long (max 15 digits)" })
 						.regex(/^8[1-9][0-9]{7,11}$/, {
-							message: "Phone must start with 8 and be valid",
+							message: "Phone number must start with 8 and be valid",
 						});
 					break;
 				case "otp":
-					fieldSchema = z
-						.string()
-						.length(6, { message: "OTP must be 6 digits" })
-						.regex(/^\d{6}$/, {
-							message: "Phone must start with 8 and be valid",
-						});
+					fieldSchema = z.string().regex(/^\d[0-9]{6}$/, {
+						message: "OTP must be exactly 6 digits number",
+					});
 					break;
 				case "select":
 					fieldSchema = z.string();
