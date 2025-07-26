@@ -12,6 +12,7 @@ import { getOTPAccess } from "../service/publicService";
 import { toast } from "react-toastify";
 import BlockInvalidInputChar from "@/utils/blockInvalidInput";
 import AppRoutes from "@/router/routes";
+import { WaPhoneConverter } from "@/utils/waPhoneConverter";
 
 const PublicHomePage = () => {
 	const navigate = useNavigate();
@@ -34,9 +35,9 @@ const PublicHomePage = () => {
 		const { phone } = values;
 
 		getOTPAccess({
-			phone: phone as string,
+			phone: WaPhoneConverter(phone as string),
 			onDone: (data) => {
-				if (data.status === 200) {
+				if (data.status === 201) {
 					toast.success(data.message, {
 						autoClose: 1000,
 						onClose: () => {

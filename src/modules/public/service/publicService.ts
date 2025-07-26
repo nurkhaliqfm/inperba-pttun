@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import type { ApiError, ApiResponse } from "@/types/global";
 
-const { VITE_SERVER_BASE_URL } = import.meta.env;
+const { VITE_SERVER_BASE_URL, VITE_IDENTITY_HASH } = import.meta.env;
 
 const getOTPAccess = async ({
 	phone,
@@ -13,24 +13,12 @@ const getOTPAccess = async ({
 	onError?: (data: ApiError) => void | undefined;
 }) => {
 	try {
-		const response = {
-			data: {
-				otp: phone,
-				message: "",
-			},
-			url: VITE_SERVER_BASE_URL,
-			status: 200,
-		};
-		// const response = await axiosClient.get(
-		// 	`${baseUrl}/${type}s?page=${page}${keyword ? `&keyword=${keyword}` : ""}${
-		// 		limit ? `&limit=${limit}` : ""
-		// 	}`,
-		// 	{
-		// 		headers: {
-		// 			Authorization: `Bearer ${token}`,
-		// 		},
-		// 	}
-		// );
+		const response = await axios.post(`${VITE_SERVER_BASE_URL}/otp/create`, {
+			phone: phone,
+			identity: btoa(`${phone}$_^${VITE_IDENTITY_HASH}`),
+		});
+
+		console.log(response);
 
 		if (onDone)
 			onDone({

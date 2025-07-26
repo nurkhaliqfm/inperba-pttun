@@ -22,10 +22,11 @@ export const generateZodSchema = (fields: FieldConfig[]) => {
 					fieldSchema = z
 						.string()
 						.trim()
-						.min(9, { message: "Phone number is too short (min 9 digits)" })
-						.max(15, { message: "Phone number is too long (max 15 digits)" })
-						.regex(/^8[1-9][0-9]{7,11}$/, {
-							message: "Phone number must start with 8 and be valid",
+						.min(10, { message: "Phone number is too short (min 10 digits)" })
+						.max(12, { message: "Phone number is too long (max 12 digits)" })
+						.regex(/^8[0-9]{9,11}$/, {
+							message:
+								"Phone number must start with 8 and be 10 to 12 digits long",
 						});
 					break;
 				case "otp":
