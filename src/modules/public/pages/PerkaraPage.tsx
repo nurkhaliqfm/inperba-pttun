@@ -1,7 +1,7 @@
 import { SearchPerkaraFieldConfig } from "@/constant/public";
 import { generateZodSchema } from "@/utils/getZodScheme";
 import { Button, Form, Input } from "@heroui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -18,10 +18,16 @@ import {
 
 import { toast } from "react-toastify";
 import BlockInvalidInputChar from "@/utils/blockInvalidInput";
+import { useSession } from "../store/useSession";
+import { useNavigate } from "react-router-dom";
+import AppRoutes from "@/router/routes";
 
 const PublicPerkaraPage = () => {
+	const navigate = useNavigate();
 	const [isLoading, setIsLoading] = useState(false);
 	const [isPerkaraFound, setIsPerkaraFound] = useState(false);
+	const session = useSession();
+	const currentSessionOTP = session.data;
 
 	const formZodSchema = generateZodSchema(SearchPerkaraFieldConfig);
 
@@ -69,6 +75,24 @@ const PublicPerkaraPage = () => {
 				});
 			},
 		});
+	}
+
+	useEffect(() => {
+		if (!currentSessionOTP) {
+			const timer = setTimeout(() => {
+				navigate(AppRoutes.PublicHome.path);
+			}, 3000);
+
+			return () => clearTimeout(timer);
+		}
+	}, [currentSessionOTP, navigate]);
+
+	if (!currentSessionOTP || !currentSessionOTP.isValidate) {
+		return (
+			<p className="text-public-secondary text-2xl font-medium text-center mt-6">
+				Redirect to OTP input phone number page ....
+			</p>
+		);
 	}
 
 	return (

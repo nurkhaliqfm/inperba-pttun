@@ -16,14 +16,19 @@ const sessionSlice = createSlice({
 		addToSession: (state, action: PayloadAction<OTPItemState>) => {
 			state.session = { ...action.payload };
 		},
-
+		updateValidation: (state, action: PayloadAction<{ identity: string }>) => {
+			if (state.session && state.session.identity === action.payload.identity) {
+				state.session.isValidate = true;
+			}
+		},
 		clearSession: (state) => {
 			state.session = null;
 		},
 	},
 });
 
-export const { addToSession, clearSession } = sessionSlice.actions;
+export const { addToSession, clearSession, updateValidation } =
+	sessionSlice.actions;
 export default sessionSlice.reducer;
 
 export const selectSessionItems = (state: { sessions: SessionState }) =>

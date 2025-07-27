@@ -14,8 +14,7 @@ import BlockInvalidInputChar from "@/utils/blockInvalidInput";
 import AppRoutes from "@/router/routes";
 import { WaPhoneConverter } from "@/utils/waPhoneConverter";
 import { useSession } from "../store/useSession";
-
-const { VITE_IDENTITY_HASH } = import.meta.env;
+import type { OTPItemState } from "@/types/session";
 
 const PublicHomePage = () => {
 	const navigate = useNavigate();
@@ -46,10 +45,7 @@ const PublicHomePage = () => {
 					toast.success(data.message, {
 						autoClose: 1000,
 						onClose: () => {
-							session.add({
-								phone: waNumber,
-								identity: btoa(`${waNumber}$_^${VITE_IDENTITY_HASH}`),
-							});
+							session.add(data.data as OTPItemState);
 							navigate(AppRoutes.PublicValidateTokenHome.path);
 						},
 					});

@@ -1,5 +1,6 @@
 import axios, { AxiosError } from "axios";
 import type { ApiError, ApiResponse } from "@/types/global";
+import { UAParser } from "ua-parser-js";
 
 const { VITE_SERVER_BASE_URL, VITE_IDENTITY_HASH } = import.meta.env;
 
@@ -12,17 +13,28 @@ const getOTPAccess = async ({
 	onDone?: (data: ApiResponse) => void | undefined;
 	onError?: (data: ApiError) => void | undefined;
 }) => {
+	const userDevice = new UAParser();
+	const signature = userDevice.getResult();
+	const today = new Date();
+	const identity = btoa(
+		`${phone}$_^${VITE_IDENTITY_HASH}$_^${signature.ua}^:${today.getTime()}`
+	);
+
 	try {
 		const response = await axios.post(`${VITE_SERVER_BASE_URL}/otp/create`, {
 			phone: phone,
-			identity: btoa(`${phone}$_^${VITE_IDENTITY_HASH}`),
+			identity: identity,
 		});
 
 		if (onDone)
 			onDone({
 				status: response.status,
 				message: response.data.message || "OTP code send successfully",
-				data: response.data.otp,
+				data: {
+					phone: phone,
+					identity: identity,
+					isValidate: false,
+				},
 			});
 	} catch (error) {
 		if (axios.isAxiosError(error)) {
@@ -44,25 +56,27 @@ const getOTPAccess = async ({
 const getOTPValidation = async ({
 	phone,
 	otp,
+	identity,
 	onDone,
 	onError,
 }: {
 	phone: string;
 	otp: string;
+	identity: string;
 	onDone?: (data: ApiResponse) => void | undefined;
 	onError?: (data: ApiError) => void | undefined;
 }) => {
 	try {
 		const response = await axios.post(`${VITE_SERVER_BASE_URL}/otp/validate`, {
 			phone: phone,
-			identity: btoa(`${phone}$_^${VITE_IDENTITY_HASH}`),
+			identity: identity,
 			otp: otp,
 		});
 
 		if (onDone)
 			onDone({
 				status: response.status,
-				message: response.data.message || "OTP code send successfully",
+				message: response.data.message || "OTP code validate successfully",
 				data: response.data.otp,
 			});
 	} catch (error) {

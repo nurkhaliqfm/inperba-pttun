@@ -3,6 +3,7 @@ import {
 	addToSession,
 	clearSession,
 	selectSessionItems,
+	updateValidation,
 } from "./session.slice";
 import type { OTPItemState } from "@/types/session";
 
@@ -13,6 +14,12 @@ export const useSession = () => {
 	return {
 		data: items,
 		add: (item: OTPItemState) => dispatch(addToSession(item)),
+		validate: (identity: string) =>
+			dispatch(
+				updateValidation({
+					identity: identity,
+				})
+			),
 		clear: () => dispatch(clearSession()),
 	};
 };

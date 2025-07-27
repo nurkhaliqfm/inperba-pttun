@@ -39,11 +39,13 @@ const PublicValidateTokenPage = () => {
 			getOTPValidation({
 				phone: currentSessionOTP.phone as string,
 				otp: otp as string,
+				identity: currentSessionOTP.identity,
 				onDone: (data) => {
 					if (data.status === 201) {
 						toast.success(data.message, {
 							autoClose: 1000,
 							onClose: () => {
+								session.validate(currentSessionOTP.identity);
 								navigate(AppRoutes.PublicPerkara.path);
 							},
 						});
@@ -73,19 +75,26 @@ const PublicValidateTokenPage = () => {
 	useEffect(() => {
 		if (!currentSessionOTP) {
 			const timer = setTimeout(() => {
-				// navigate(AppRoutes.PublicHome.path);
+				navigate(AppRoutes.PublicHome.path);
 			}, 3000);
 
 			return () => clearTimeout(timer);
 		}
 	}, [currentSessionOTP, navigate]);
 
-	if (!currentSessionOTP)
+	if (!currentSessionOTP) {
 		return (
 			<p className="text-public-secondary text-2xl font-medium text-center mt-6">
-				Redirect to OTP Input Phone Number ....
+				Redirect to OTP input phone number page ....
 			</p>
 		);
+	} else if (currentSessionOTP && currentSessionOTP.isValidate) {
+		return (
+			<p className="text-public-secondary text-2xl font-medium text-center mt-6">
+				Redirect to daftar perkara page ....
+			</p>
+		);
+	}
 
 	return (
 		<section className="flex flex-col md:flex-row gap-4">
