@@ -79,6 +79,12 @@ const PublicValidateTokenPage = () => {
 			}, 3000);
 
 			return () => clearTimeout(timer);
+		} else if (currentSessionOTP && currentSessionOTP.isValidate) {
+			const timer = setTimeout(() => {
+				navigate(AppRoutes.PublicPerkara.path);
+			}, 3000);
+
+			return () => clearTimeout(timer);
 		}
 	}, [currentSessionOTP, navigate]);
 
