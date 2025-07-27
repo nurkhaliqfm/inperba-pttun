@@ -12,6 +12,8 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
+const { VITE_NODE_ENV } = import.meta.env;
+
 const rootReducer = combineReducers({
 	sessions: sessionReducer,
 });
@@ -20,6 +22,7 @@ const persistConfig = {
 	key: "root",
 	storage,
 	whitelist: ["sessions"],
+	devTools: VITE_NODE_ENV !== "production",
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
