@@ -8,26 +8,28 @@ import { BrowserRouter } from "react-router-dom";
 // import { PersistGate } from "redux-persist/integration/react";
 import { HeroUIProvider } from "@heroui/react";
 import AppRouter from "./router/AppRouter.tsx";
-// import { PersistGate } from "redux-persist/integration/react";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { persistor, store } from "./store/store.ts";
 
 createRoot(document.getElementById("root")!).render(
 	<BrowserRouter>
 		<StrictMode>
-			{/* <Provider store={store}> */}
-			{/* <PersistGate loading={null} persistor={persistor}> */}
-			<ToastContainer
-				newestOnTop
-				pauseOnHover={false}
-				closeOnClick
-				stacked
-				draggablePercent={20}
-				pauseOnFocusLoss={false}
-			/>
-			<HeroUIProvider>
-				<AppRouter />
-			</HeroUIProvider>
-			{/* </PersistGate> */}
-			{/* </Provider> */}
+			<Provider store={store}>
+				<PersistGate loading={null} persistor={persistor}>
+					<ToastContainer
+						newestOnTop
+						pauseOnHover={false}
+						closeOnClick
+						stacked
+						draggablePercent={20}
+						pauseOnFocusLoss={false}
+					/>
+					<HeroUIProvider>
+						<AppRouter />
+					</HeroUIProvider>
+				</PersistGate>
+			</Provider>
 		</StrictMode>
 	</BrowserRouter>
 );

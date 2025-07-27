@@ -18,8 +18,6 @@ const getOTPAccess = async ({
 			identity: btoa(`${phone}$_^${VITE_IDENTITY_HASH}`),
 		});
 
-		console.log(response);
-
 		if (onDone)
 			onDone({
 				status: response.status,

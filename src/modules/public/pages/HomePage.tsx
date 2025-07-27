@@ -13,10 +13,14 @@ import { toast } from "react-toastify";
 import BlockInvalidInputChar from "@/utils/blockInvalidInput";
 import AppRoutes from "@/router/routes";
 import { WaPhoneConverter } from "@/utils/waPhoneConverter";
+import { useSession } from "../store/useSession";
+
+const { VITE_IDENTITY_HASH } = import.meta.env;
 
 const PublicHomePage = () => {
 	const navigate = useNavigate();
 	const [isLoading, setIsLoading] = useState(false);
+	const session = useSession();
 
 	const formZodSchema = generateZodSchema(OTPFieldConfig);
 
@@ -33,14 +37,19 @@ const PublicHomePage = () => {
 		setIsLoading(true);
 
 		const { phone } = values;
+		const waNumber = WaPhoneConverter(phone as string);
 
 		getOTPAccess({
-			phone: WaPhoneConverter(phone as string),
+			phone: waNumber,
 			onDone: (data) => {
 				if (data.status === 201) {
 					toast.success(data.message, {
 						autoClose: 1000,
 						onClose: () => {
+							session.add({
+								phone: waNumber,
+								identity: btoa(`${waNumber}$_^${VITE_IDENTITY_HASH}`),
+							});
 							navigate(AppRoutes.PublicValidateTokenHome.path);
 						},
 					});
