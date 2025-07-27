@@ -1,20 +1,23 @@
 import { ValidationOTPFieldConfig } from "@/constant/public";
 import { generateZodSchema } from "@/utils/getZodScheme";
 import { Button, Form, InputOtp } from "@heroui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { getOTPAccess } from "../service/publicService";
+import { getOTPValidation } from "../service/publicService";
 import { toast } from "react-toastify";
 import BlockInvalidInputChar from "@/utils/blockInvalidInput";
 import { BsShieldLockFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import AppRoutes from "@/router/routes";
+import { useSession } from "../store/useSession";
 
 const PublicValidateTokenPage = () => {
 	const navigate = useNavigate();
 	const [isLoading, setIsLoading] = useState(false);
+	const session = useSession();
+	const currentSessionOTP = session.data;
 
 	const formZodSchema = generateZodSchema(ValidationOTPFieldConfig);
 
@@ -28,42 +31,61 @@ const PublicValidateTokenPage = () => {
 	});
 
 	function onSubmit(values: z.infer<typeof formZodSchema>) {
-		console.log(values);
 		setIsLoading(true);
 
-		const { phone } = values;
+		const { otp } = values;
 
-		getOTPAccess({
-			phone: phone as string,
-			onDone: (data) => {
-				if (data.status === 200) {
-					toast.success(data.message, {
-						autoClose: 1000,
-						onClose: () => {
-							navigate(AppRoutes.PublicPerkara.path);
-						},
-					});
-				} else {
-					toast.error(data.message, {
+		if (currentSessionOTP) {
+			getOTPValidation({
+				phone: currentSessionOTP.phone as string,
+				otp: otp as string,
+				onDone: (data) => {
+					if (data.status === 201) {
+						toast.success(data.message, {
+							autoClose: 1000,
+							onClose: () => {
+								navigate(AppRoutes.PublicPerkara.path);
+							},
+						});
+					} else {
+						toast.error(data.message, {
+							theme: "colored",
+							autoClose: 1000,
+							onClose: () => {
+								setIsLoading(false);
+							},
+						});
+					}
+				},
+				onError: (error) => {
+					toast.error(error.error, {
 						theme: "colored",
 						autoClose: 1000,
 						onClose: () => {
 							setIsLoading(false);
 						},
 					});
-				}
-			},
-			onError: (error) => {
-				toast.error(error.error, {
-					theme: "colored",
-					autoClose: 1000,
-					onClose: () => {
-						setIsLoading(false);
-					},
-				});
-			},
-		});
+				},
+			});
+		}
 	}
+
+	useEffect(() => {
+		if (!currentSessionOTP) {
+			const timer = setTimeout(() => {
+				// navigate(AppRoutes.PublicHome.path);
+			}, 3000);
+
+			return () => clearTimeout(timer);
+		}
+	}, [currentSessionOTP, navigate]);
+
+	if (!currentSessionOTP)
+		return (
+			<p className="text-public-secondary text-2xl font-medium text-center mt-6">
+				Redirect to OTP Input Phone Number ....
+			</p>
+		);
 
 	return (
 		<section className="flex flex-col md:flex-row gap-4">

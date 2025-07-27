@@ -30,7 +30,7 @@ export const generateZodSchema = (fields: FieldConfig[]) => {
 						});
 					break;
 				case "otp":
-					fieldSchema = z.string().regex(/^\d[0-9]{6}$/, {
+					fieldSchema = z.string().regex(/^\d{6}$/, {
 						message: "OTP must be exactly 6 digits number",
 					});
 					break;

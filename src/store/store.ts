@@ -13,7 +13,7 @@ import {
 import storage from "redux-persist/lib/storage";
 
 const rootReducer = combineReducers({
-	session: sessionReducer,
+	sessions: sessionReducer,
 });
 
 const persistConfig = {

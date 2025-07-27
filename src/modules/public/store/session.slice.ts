@@ -26,5 +26,5 @@ const sessionSlice = createSlice({
 export const { addToSession, clearSession } = sessionSlice.actions;
 export default sessionSlice.reducer;
 
-export const selectSessionItems = (state: { session: SessionState }) =>
-	state.session;
+export const selectSessionItems = (state: { sessions: SessionState }) =>
+	state.sessions.session;
