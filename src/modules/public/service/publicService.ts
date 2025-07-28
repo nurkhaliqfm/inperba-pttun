@@ -77,7 +77,6 @@ const getOTPValidation = async ({
 			onDone({
 				status: response.status,
 				message: response.data.message || "OTP code validate successfully",
-				data: response.data.otp,
 			});
 	} catch (error) {
 		if (axios.isAxiosError(error)) {
@@ -96,4 +95,49 @@ const getOTPValidation = async ({
 	}
 };
 
-export { getOTPAccess, getOTPValidation };
+const getDetailPerkara = async ({
+	perkara,
+	identity,
+	onDone,
+	onError,
+}: {
+	perkara: string;
+	identity: string;
+	onDone?: (data: ApiResponse) => void | undefined;
+	onError?: (data: ApiError) => void | undefined;
+}) => {
+	try {
+		const response = await axios.get(
+			`${VITE_SERVER_BASE_URL}/public/perkara-detail?perkara=${perkara}`,
+			{
+				headers: {
+					Authorization: `${identity}`,
+				},
+			}
+		);
+
+		if (onDone)
+			onDone({
+				status: response.status,
+				message:
+					response.data.message || "Data Perkara Banding found successfully",
+				data: response.data,
+			});
+	} catch (error) {
+		if (axios.isAxiosError(error)) {
+			const axiosError = error as AxiosError<ApiError>;
+			if (onError)
+				onError({
+					status: axiosError.response?.status || 500,
+					error: axiosError.response?.data.error || axiosError.message,
+				});
+			if (axiosError.response?.status === 401) {
+				localStorage.removeItem("authData");
+				window.location.reload();
+			}
+		}
+		throw error;
+	}
+};
+
+export { getOTPAccess, getOTPValidation, getDetailPerkara };

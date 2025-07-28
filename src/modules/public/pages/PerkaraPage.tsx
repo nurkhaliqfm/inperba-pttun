@@ -1,12 +1,12 @@
 import { SearchPerkaraFieldConfig } from "@/constant/public";
 import { generateZodSchema } from "@/utils/getZodScheme";
 import { Button, Form, Input } from "@heroui/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type Key } from "react";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { HiMagnifyingGlass, HiOutlineDocumentText } from "react-icons/hi2";
-import { getOTPAccess } from "../service/publicService";
+import { getDetailPerkara } from "../service/publicService";
 import {
 	Table,
 	TableHeader,
@@ -17,15 +17,53 @@ import {
 } from "@heroui/table";
 
 import { toast } from "react-toastify";
-import BlockInvalidInputChar from "@/utils/blockInvalidInput";
 import { useSession } from "../store/useSession";
 import { useNavigate } from "react-router-dom";
 import AppRoutes from "@/router/routes";
+import dayjs from "dayjs";
+import "dayjs/locale/id";
+dayjs.locale("id");
+
+const columns = [
+	{
+		key: "tanggal_registrasi",
+		label: "TANGGAL PENDAFTARAN",
+	},
+	{
+		key: "jenis_perkara",
+		label: "JENIS PERKARA",
+	},
+	{
+		key: "nomor_perkara",
+		label: "NOMOR PERKARA",
+	},
+	{ key: "para_pihak", label: "PARA PIHAK" },
+	{ key: "tanggal_hari_sidang", label: "SIDANG PUTUSAN" },
+];
+
+type DataPerkara = {
+	jenis_perkara: string;
+	kontak_wa: string;
+	nomor_perkara: string;
+	pembading: string;
+	terbanding: string;
+	status_hari_sidang: boolean;
+	status_penetapan_majelis: boolean;
+	status_penetapan_sidang: boolean;
+	status_penunjukan_panitera: boolean;
+	status_proses: string;
+	tanggal_hari_sidang: Date;
+	tanggal_penetapan_majelis: Date;
+	tanggal_penetapan_sidang: Date;
+	tanggal_penunjukan_panitera: Date;
+	tanggal_registrasi: Date;
+};
 
 const PublicPerkaraPage = () => {
 	const navigate = useNavigate();
 	const [isLoading, setIsLoading] = useState(false);
 	const [isPerkaraFound, setIsPerkaraFound] = useState(false);
+	const [dataPerkara, setDataPerkara] = useState<DataPerkara | null>();
 	const session = useSession();
 	const currentSessionOTP = session.data;
 
@@ -43,39 +81,86 @@ const PublicPerkaraPage = () => {
 	function onSubmit(values: z.infer<typeof formZodSchema>) {
 		setIsLoading(true);
 
-		const { phone } = values;
+		const { perkara } = values;
 
-		getOTPAccess({
-			phone: phone as string,
-			onDone: (data) => {
-				if (data.status === 200) {
-					toast.success(data.message, {
-						autoClose: 1000,
-						onClose: () => {
-							setIsPerkaraFound(true);
-						},
-					});
-				} else {
-					toast.error(data.message, {
+		if (currentSessionOTP) {
+			getDetailPerkara({
+				perkara: perkara as string,
+				identity: currentSessionOTP.identity,
+				onDone: (data) => {
+					if (data.status === 200) {
+						toast.success(data.message, {
+							autoClose: 1000,
+							onClose: () => {
+								setIsPerkaraFound(true);
+								setDataPerkara(data.data as DataPerkara);
+							},
+						});
+					} else {
+						toast.error(data.message, {
+							theme: "colored",
+							autoClose: 1000,
+							onClose: () => {
+								setIsLoading(false);
+							},
+						});
+					}
+				},
+				onError: (error) => {
+					toast.error(error.error, {
 						theme: "colored",
 						autoClose: 1000,
 						onClose: () => {
 							setIsLoading(false);
 						},
 					});
-				}
-			},
-			onError: (error) => {
-				toast.error(error.error, {
-					theme: "colored",
-					autoClose: 1000,
-					onClose: () => {
-						setIsLoading(false);
-					},
-				});
-			},
-		});
+				},
+			});
+		}
 	}
+
+	const renderCell = useCallback((perkara: DataPerkara, columnKey: Key) => {
+		const cellValue = perkara[columnKey as keyof DataPerkara];
+		console.log(cellValue);
+
+		switch (columnKey) {
+			case "tanggal_registrasi":
+			case "tanggal_hari_sidang":
+				return (
+					<div className="flex flex-col">
+						<p className="text-bold text-sm capitalize">
+							{String(
+								dayjs(new Date(cellValue as string)).format("DD MMMM YYYY")
+							)}
+						</p>
+					</div>
+				);
+
+			case "jenis_perkara":
+			case "nomor_perkara":
+				return (
+					<div className="flex flex-col">
+						<p className="text-bold text-sm capitalize">{String(cellValue)}</p>
+					</div>
+				);
+			case "para_pihak":
+				return (
+					<div className="flex flex-col w-40">
+						<div className="flex flex-col my-2">
+							<p className="text-xs">Pembanding:</p>
+							<p className="font-bold">{perkara.pembading}</p>
+						</div>
+						<div className="flex flex-col my-2">
+							<p className="text-xs">Terbanding:</p>
+							<p className="font-bold">{perkara.terbanding}</p>
+						</div>
+					</div>
+				);
+
+			default:
+				return String(cellValue ?? "");
+		}
+	}, []);
 
 	useEffect(() => {
 		if (!currentSessionOTP) {
@@ -122,9 +207,8 @@ const PublicPerkaraPage = () => {
 									color="success"
 									isClearable
 									labelPlacement="outside"
-									type="number"
+									type="text"
 									placeholder={`Masukkan ${ff.label}`}
-									onKeyDown={BlockInvalidInputChar}
 									startContent={
 										<p className="flex justify-center items-center gap-2">
 											<HiOutlineDocumentText className="pointer-events-none shrink-0" />
@@ -171,38 +255,27 @@ const PublicPerkaraPage = () => {
 						</div>
 					</Form>
 				) : (
-					<Table
-						className="my-10"
-						aria-label="Table Data Perkara Banding Diputus"
-						color="success">
-						<TableHeader>
-							<TableColumn>TANGGAL PENDAFTARAN</TableColumn>
-							<TableColumn>JENIS PERKARA</TableColumn>
-							<TableColumn>NOMOR PERKARA</TableColumn>
-							<TableColumn>PARA PIHAK</TableColumn>
-							<TableColumn>SIDANG PUTUSAN</TableColumn>
-						</TableHeader>
-						<TableBody>
-							<TableRow key="1">
-								<TableCell>2025-01-07</TableCell>
-								<TableCell>Lain-Lain</TableCell>
-								<TableCell>1/B/2025/PT.TUN.BJM</TableCell>
-								<TableCell>
-									<div className="flex flex-col my-2">
-										<p className="text-xs">Pembanding:</p>
-										<p className="font-bold">Budianto</p>
-									</div>
-									<div className="flex flex-col my-2">
-										<p className="text-xs">Terbanding:</p>
-										<p className="font-bold">
-											KEPALA KEPOLISIAN KALIMANTAN BARAT
-										</p>
-									</div>
-								</TableCell>
-								<TableCell>2025-02-04, 2025-02-04</TableCell>
-							</TableRow>
-						</TableBody>
-					</Table>
+					dataPerkara && (
+						<Table
+							className="my-10"
+							aria-label="Table Data Perkara Banding Diputus"
+							color="success">
+							<TableHeader columns={columns}>
+								{(column) => (
+									<TableColumn key={column.key}>{column.label}</TableColumn>
+								)}
+							</TableHeader>
+							<TableBody items={[dataPerkara]}>
+								{(item) => (
+									<TableRow key={item.nomor_perkara}>
+										{(columnKey) => (
+											<TableCell>{renderCell(item, columnKey)}</TableCell>
+										)}
+									</TableRow>
+								)}
+							</TableBody>
+						</Table>
+					)
 				)}
 			</section>
 		</section>

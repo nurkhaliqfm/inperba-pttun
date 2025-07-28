@@ -13,9 +13,9 @@ export const ValidationOTPFieldConfig = [
 
 export const SearchPerkaraFieldConfig = [
 	{
-		name: "nomor_perkara",
+		name: "perkara",
 		label: "Nomor Perkara",
-		type: "nomor_perkara",
+		type: "text",
 		required: true,
 	},
 ];
