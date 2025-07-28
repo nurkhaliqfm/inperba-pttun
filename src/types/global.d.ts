@@ -10,6 +10,6 @@ export interface ApiResponse {
 }
 
 export interface TableHeaderComponent {
-	name: string;
-	slug: string;
+	key: string;
+	label: string;
 }

@@ -22,9 +22,11 @@ import { useNavigate } from "react-router-dom";
 import AppRoutes from "@/router/routes";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
+import type { PerkaraDetailResponse } from "@/modules/admin/types/perkara.type";
+import type { TableHeaderComponent } from "@/types/global";
 dayjs.locale("id");
 
-const columns = [
+const PerkaraHeaderTable: TableHeaderComponent[] = [
 	{
 		key: "tanggal_registrasi",
 		label: "TANGGAL PENDAFTARAN",
@@ -41,29 +43,12 @@ const columns = [
 	{ key: "tanggal_hari_sidang", label: "SIDANG PUTUSAN" },
 ];
 
-type DataPerkara = {
-	jenis_perkara: string;
-	kontak_wa: string;
-	nomor_perkara: string;
-	pembading: string;
-	terbanding: string;
-	status_hari_sidang: boolean;
-	status_penetapan_majelis: boolean;
-	status_penetapan_sidang: boolean;
-	status_penunjukan_panitera: boolean;
-	status_proses: string;
-	tanggal_hari_sidang: Date;
-	tanggal_penetapan_majelis: Date;
-	tanggal_penetapan_sidang: Date;
-	tanggal_penunjukan_panitera: Date;
-	tanggal_registrasi: Date;
-};
-
 const PublicPerkaraPage = () => {
 	const navigate = useNavigate();
 	const [isLoading, setIsLoading] = useState(false);
 	const [isPerkaraFound, setIsPerkaraFound] = useState(false);
-	const [dataPerkara, setDataPerkara] = useState<DataPerkara | null>();
+	const [dataPerkara, setDataPerkara] =
+		useState<PerkaraDetailResponse | null>();
 	const session = useSession();
 	const currentSessionOTP = session.data;
 
@@ -93,7 +78,7 @@ const PublicPerkaraPage = () => {
 							autoClose: 1000,
 							onClose: () => {
 								setIsPerkaraFound(true);
-								setDataPerkara(data.data as DataPerkara);
+								setDataPerkara(data.data as PerkaraDetailResponse);
 							},
 						});
 					} else {
@@ -119,47 +104,52 @@ const PublicPerkaraPage = () => {
 		}
 	}
 
-	const renderCell = useCallback((perkara: DataPerkara, columnKey: Key) => {
-		const cellValue = perkara[columnKey as keyof DataPerkara];
+	const renderCell = useCallback(
+		(perkara: PerkaraDetailResponse, columnKey: Key) => {
+			const cellValue = perkara[columnKey as keyof PerkaraDetailResponse];
 
-		switch (columnKey) {
-			case "tanggal_registrasi":
-			case "tanggal_hari_sidang":
-				return (
-					<div className="flex flex-col">
-						<p className="text-bold text-sm capitalize">
-							{String(
-								dayjs(new Date(cellValue as string)).format("DD MMMM YYYY")
-							)}
-						</p>
-					</div>
-				);
-
-			case "jenis_perkara":
-			case "nomor_perkara":
-				return (
-					<div className="flex flex-col">
-						<p className="text-bold text-sm capitalize">{String(cellValue)}</p>
-					</div>
-				);
-			case "para_pihak":
-				return (
-					<div className="flex flex-col w-40">
-						<div className="flex flex-col my-2">
-							<p className="text-xs">Pembanding:</p>
-							<p className="font-bold">{perkara.pembading}</p>
+			switch (columnKey) {
+				case "tanggal_registrasi":
+				case "tanggal_hari_sidang":
+					return (
+						<div className="flex flex-col">
+							<p className="text-bold text-sm capitalize">
+								{String(
+									dayjs(new Date(cellValue as string)).format("DD MMMM YYYY")
+								)}
+							</p>
 						</div>
-						<div className="flex flex-col my-2">
-							<p className="text-xs">Terbanding:</p>
-							<p className="font-bold">{perkara.terbanding}</p>
-						</div>
-					</div>
-				);
+					);
 
-			default:
-				return String(cellValue ?? "");
-		}
-	}, []);
+				case "jenis_perkara":
+				case "nomor_perkara":
+					return (
+						<div className="flex flex-col">
+							<p className="text-bold text-sm capitalize">
+								{String(cellValue)}
+							</p>
+						</div>
+					);
+				case "para_pihak":
+					return (
+						<div className="flex flex-col w-40">
+							<div className="flex flex-col my-2">
+								<p className="text-xs">Pembanding:</p>
+								<p className="font-bold">{perkara.pembading}</p>
+							</div>
+							<div className="flex flex-col my-2">
+								<p className="text-xs">Terbanding:</p>
+								<p className="font-bold">{perkara.terbanding}</p>
+							</div>
+						</div>
+					);
+
+				default:
+					return String(cellValue ?? "");
+			}
+		},
+		[]
+	);
 
 	useEffect(() => {
 		if (!currentSessionOTP) {
@@ -259,14 +249,14 @@ const PublicPerkaraPage = () => {
 							className="my-10"
 							aria-label="Table Data Perkara Banding Diputus"
 							color="success">
-							<TableHeader columns={columns}>
+							<TableHeader columns={PerkaraHeaderTable}>
 								{(column) => (
 									<TableColumn key={column.key}>{column.label}</TableColumn>
 								)}
 							</TableHeader>
 							<TableBody items={[dataPerkara]}>
 								{(item) => (
-									<TableRow key={item.nomor_perkara}>
+									<TableRow key={item.id}>
 										{(columnKey) => (
 											<TableCell>{renderCell(item, columnKey)}</TableCell>
 										)}

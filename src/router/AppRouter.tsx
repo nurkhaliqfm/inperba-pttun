@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import Error from "../modules/error";
 import AppRoutes from "./routes";
+import Admin from "../modules/admin";
 import Public from "../modules/public";
 import PublicLayout from "@/modules/public/components/layout/PublicLayout";
 
@@ -16,6 +17,13 @@ function AppRouter() {
 				path={AppRoutes.Forbidden.path}
 				element={<Error.ForbiddenPage />}
 			/>
+
+			<Route element={<PublicLayout />}>
+				<Route
+					path={AppRoutes.AdminDashboard.path}
+					element={<Admin.DashboardAdminPage />}
+				/>
+			</Route>
 
 			<Route element={<PublicLayout />}>
 				<Route

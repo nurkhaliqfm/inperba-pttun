@@ -2,7 +2,15 @@ const AppRoutes = {
 	//NOTE: Admin Route
 	AdminDashboard: {
 		path: "/admin/dashboard",
-		label: "Dashboard Admin | INPERBA PTTUN Makassar",
+		label: "Dashboard Admin | INFO PUTUS PTTUN Makassar",
+	},
+	AdminCreatePerkara: {
+		path: "/admin/create-perkara",
+		label: "Buat Informasi Perkara | INFO PUTUS PTTUN Makassar",
+	},
+	AdminEditPerkara: {
+		path: "/admin/edit-perkara/:slug",
+		label: "Edit Informasi Perkara | INFO PUTUS PTTUN Makassar",
 	},
 
 	// NOTE: Public Route
@@ -16,15 +24,15 @@ const AppRoutes = {
 	},
 	PublicPerkara: {
 		path: "/info-perkara-banding",
-		label: "Perkara Banding | INPERBA PTTUN Makassar",
+		label: "Perkara Banding | INFO PUTUS PTTUN Makassar",
 	},
 
 	// NOTE: Others Route
-	Login: { path: "/login", lable: "Login Page | INPERBA PTTUN Makassar" },
-	Error: { path: "/error", label: "Error Page | INPERBA PTTUN Makassar" },
+	Login: { path: "/login", lable: "Login Page | INFO PUTUS PTTUN Makassar" },
+	Error: { path: "/error", label: "Error Page | INFO PUTUS PTTUN Makassar" },
 	Forbidden: {
 		path: "/forbidden",
-		label: "Forbidden Page | INPERBA PTTUN Makassar",
+		label: "Forbidden Page | INFO PUTUS PTTUN Makassar",
 	},
 };
 
