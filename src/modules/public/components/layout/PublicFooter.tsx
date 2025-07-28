@@ -11,7 +11,7 @@ const PublicFooter = () => {
 	return (
 		<footer className="w-full bottom-2 flex justify-center items-center border-t-2 border-t-public-accent">
 			<div className="flex flex-col w-full max-w-2xl justify-center items-center px-6 py-4">
-				<p className="text-public-secondary font-light">INPERBA v1.0</p>
+				<p className="text-public-secondary font-light">INFO-PUTUS v1.0</p>
 				<p className="text-public-secondary">
 					<PiCopyright className="inline" />{" "}
 					<span>
