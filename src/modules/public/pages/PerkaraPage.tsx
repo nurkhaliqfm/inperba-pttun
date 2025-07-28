@@ -121,7 +121,6 @@ const PublicPerkaraPage = () => {
 
 	const renderCell = useCallback((perkara: DataPerkara, columnKey: Key) => {
 		const cellValue = perkara[columnKey as keyof DataPerkara];
-		console.log(cellValue);
 
 		switch (columnKey) {
 			case "tanggal_registrasi":
