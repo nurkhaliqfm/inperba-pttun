@@ -1,4 +1,5 @@
 import {
+	cn,
 	Input,
 	Pagination,
 	Spinner,
@@ -128,13 +129,17 @@ export function PerkaraTable({
 				case "tanggal_registrasi":
 				case "tanggal_hari_sidang":
 					return (
-						<div className="flex flex-col">
-							<p className="text-bold text-sm capitalize">
-								{String(
-									dayjs(new Date(cellValue as string)).format("DD MMMM YYYY")
-								)}
-							</p>
-						</div>
+						<p
+							className={cn(
+								"text-sm capitalize whitespace-nowrap",
+								cellValue ? "font-bold" : "font-light italic"
+							)}>
+							{cellValue
+								? String(
+										dayjs(new Date(cellValue as string)).format("DD MMMM YYYY")
+								  )
+								: "Belum Ditetapkan"}
+						</p>
 					);
 
 				case "jenis_perkara":
