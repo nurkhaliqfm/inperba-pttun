@@ -31,7 +31,7 @@ const DashboardAdminPage = () => {
 		<main>
 			{perkaraData ? (
 				<>
-					<section className="flex justify-between my-2 p-4 pb-0 capitalize">
+					<section className="flex justify-between my-2 py-4 pb-0 capitalize">
 						<h3 className="capitalize text-xl font-light text-public-secondary">
 							Data Perkara PTTUN Makassar
 						</h3>
