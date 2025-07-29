@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
-import type { ApiError } from "@/types/global";
-import type { PerkaraResponse } from "../types/perkara.type";
+import type { ApiError, ApiResponse } from "@/types/global";
+import type { PerkaraRequest, PerkaraResponse } from "../types/perkara.type";
 
 const { VITE_SERVER_BASE_URL } = import.meta.env;
 
@@ -42,4 +42,42 @@ const getListPerkaraPagination = async ({
 	}
 };
 
-export { getListPerkaraPagination };
+const createPerkara = async ({
+	perkara,
+	onDone,
+	onError,
+}: {
+	perkara: PerkaraRequest;
+	onDone?: (data: ApiResponse) => void | undefined;
+	onError?: (data: ApiError) => void | undefined;
+}) => {
+	try {
+		const response = await axios.post(
+			`${VITE_SERVER_BASE_URL}/public/perkara/create`,
+			{ data: perkara }
+		);
+
+		if (onDone)
+			onDone({
+				status: response.status,
+				message:
+					response.data.message || "Perkara Information created successfully",
+			});
+	} catch (error) {
+		if (axios.isAxiosError(error)) {
+			const axiosError = error as AxiosError<ApiError>;
+			if (onError)
+				onError({
+					status: axiosError.response?.status || 500,
+					error: axiosError.response?.data.error || axiosError.message,
+				});
+			if (axiosError.response?.status === 401) {
+				localStorage.removeItem("authData");
+				window.location.reload();
+			}
+		}
+		throw error;
+	}
+};
+
+export { createPerkara, getListPerkaraPagination };
