@@ -27,6 +27,10 @@ function AppRouter() {
 					path={AppRoutes.AdminCreatePerkara.path}
 					element={<Admin.CreatePerkaraAdminPage />}
 				/>
+				<Route
+					path={AppRoutes.AdminEditPerkara.path}
+					element={<Admin.EditPerkaraAdminPage />}
+				/>
 			</Route>
 
 			<Route element={<PublicLayout />}>

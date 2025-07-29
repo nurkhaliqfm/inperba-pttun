@@ -1,6 +1,12 @@
 import {
+	Button,
 	cn,
 	Input,
+	Modal,
+	ModalBody,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
 	Pagination,
 	Spinner,
 	Table,
@@ -9,9 +15,15 @@ import {
 	TableColumn,
 	TableHeader,
 	TableRow,
+	Tooltip,
+	useDisclosure,
 } from "@heroui/react";
 import { useCallback, useEffect, useMemo, useState, type Key } from "react";
-import { HiOutlineMagnifyingGlass } from "react-icons/hi2";
+import {
+	HiOutlineMagnifyingGlass,
+	HiOutlinePencil,
+	HiOutlineTrash,
+} from "react-icons/hi2";
 
 import useDebounce from "@/hooks/useDebounce";
 import type {
@@ -19,8 +31,11 @@ import type {
 	PerkaraResponse,
 } from "../types/perkara.type";
 import type { TableHeaderComponent } from "@/types/global";
-import type { SetURLSearchParams } from "react-router-dom";
+import { useNavigate, type SetURLSearchParams } from "react-router-dom";
 import dayjs from "dayjs";
+import AppRoutes from "@/router/routes";
+import { deletePerkara } from "../service/perkaraService";
+import { toast } from "react-toastify";
 
 const PerkaraHeaderTable: TableHeaderComponent[] = [
 	{
@@ -37,6 +52,7 @@ const PerkaraHeaderTable: TableHeaderComponent[] = [
 	},
 	{ key: "para_pihak", label: "PARA PIHAK" },
 	{ key: "tanggal_hari_sidang", label: "SIDANG PUTUSAN" },
+	{ key: "actions", label: "ACTIONS" },
 ];
 
 export function PerkaraTable({
@@ -52,7 +68,13 @@ export function PerkaraTable({
 	limit: string;
 	setSearchParams: SetURLSearchParams;
 }) {
+	const navigate = useNavigate();
+	const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
 	const [isLoadingData, setIsLoadingData] = useState<boolean>(false);
+	const [isLoadingDelete, setIsLoadingDelete] = useState<boolean>(false);
+	const [deletedContent, setDeletedContent] =
+		useState<PerkaraDetailResponse | null>(null);
 	const [filterValue, setFilterValue] = useState<string>(keyword);
 	const debounceValue = useDebounce(filterValue);
 
@@ -164,68 +186,192 @@ export function PerkaraTable({
 							</div>
 						</div>
 					);
-
+				case "actions":
+					return (
+						<div className="relative flex items-center gap-2">
+							<Tooltip content="Edit Perkara">
+								<Button
+									color="success"
+									size="sm"
+									onPress={() =>
+										navigate(
+											`${AppRoutes.AdminEditPerkara.path.replace(
+												":slug",
+												String(perkara.id)
+											)}`
+										)
+									}
+									isIconOnly
+									startContent={<HiOutlinePencil />}
+								/>
+							</Tooltip>
+							<Tooltip content="Delete Perkara">
+								<Button
+									color="danger"
+									size="sm"
+									onPress={() => {
+										onOpen();
+										setDeletedContent(perkara);
+									}}
+									isIconOnly
+									startContent={<HiOutlineTrash />}
+								/>
+							</Tooltip>
+						</div>
+					);
 				default:
 					return String(cellValue ?? "");
 			}
 		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	);
 
 	return (
-		<Table
-			className="gap-0"
-			isHeaderSticky
-			isStriped={true}
-			shadow="none"
-			aria-label="Data koleksi perpustakaan"
-			topContent={topContent}
-			topContentPlacement="outside"
-			bottomContentPlacement="outside"
-			bottomContent={
-				<div className="flex w-full justify-center my-4">
-					<Pagination
-						isCompact
-						showControls
-						showShadow
-						color="success"
-						page={page}
-						total={data.pages.total}
-						onChange={(page) =>
-							setSearchParams({
-								page: page.toString(),
-								keyword: filterValue,
-								limit: limit,
-							})
-						}
-					/>
-				</div>
-			}>
-			<TableHeader columns={PerkaraHeaderTable}>
-				{(column) => (
-					<TableColumn key={column.key} align="start">
-						{column.label}
-					</TableColumn>
-				)}
-			</TableHeader>
-			<TableBody
-				isLoading={isLoadingData}
-				loadingContent={
-					<div className="bg-white rounded-xl shadow-md z-50">
-						<Spinner className="m-4" label="Loading data..." />
+		<>
+			<Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="center">
+				<ModalContent>
+					{(onClose) => (
+						<>
+							<ModalHeader className="flex flex-col gap-1">
+								Apakah anda yakin ingin menghapus perkara ini?
+							</ModalHeader>
+							<ModalBody>
+								<p>
+									Data perkara{" "}
+									<span className="font-bold">
+										{deletedContent?.nomor_perkara}
+									</span>{" "}
+									akan dihapus. Tindakan ini tidak dapat dibatalkan. Ini akan
+									secara permanen menghapus data Anda dari server kami.
+								</p>
+							</ModalBody>
+							<ModalFooter>
+								<Button color="danger" variant="light" onPress={onClose}>
+									Close
+								</Button>
+								<Button
+									size="md"
+									isLoading={isLoadingDelete}
+									spinner={
+										<svg
+											className="animate-spin h-5 w-5 text-current"
+											fill="none"
+											viewBox="0 0 24 24"
+											xmlns="http://www.w3.org/2000/svg">
+											<circle
+												className="opacity-25"
+												cx="12"
+												cy="12"
+												r="10"
+												stroke="currentColor"
+												strokeWidth="4"
+											/>
+											<path
+												className="opacity-75"
+												d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+												fill="currentColor"
+											/>
+										</svg>
+									}
+									color="danger"
+									variant="solid"
+									onPress={() => {
+										setIsLoadingDelete(true);
+										deletePerkara({
+											perkara: Number(deletedContent?.id),
+											onDone: (data) => {
+												if (data.status === 200) {
+													toast.success(data.message, {
+														autoClose: 1000,
+														onClose: () => {
+															window.location.reload();
+															setIsLoadingDelete(false);
+														},
+													});
+												} else {
+													toast.error(data.message, {
+														theme: "colored",
+														autoClose: 1000,
+														onClose: () => {
+															setIsLoadingDelete(false);
+														},
+													});
+												}
+											},
+											onError: (error) => {
+												toast.error(error.error, {
+													theme: "colored",
+													autoClose: 1000,
+													onClose: () => {
+														setIsLoadingDelete(false);
+													},
+												});
+											},
+										});
+									}}>
+									Hapus
+								</Button>
+							</ModalFooter>
+						</>
+					)}
+				</ModalContent>
+			</Modal>
+
+			<Table
+				className="gap-0"
+				isHeaderSticky
+				isStriped={true}
+				shadow="none"
+				aria-label="Data koleksi perpustakaan"
+				topContent={topContent}
+				topContentPlacement="outside"
+				bottomContentPlacement="outside"
+				bottomContent={
+					<div className="flex w-full justify-center my-4">
+						<Pagination
+							isCompact
+							showControls
+							showShadow
+							color="success"
+							page={page}
+							total={data.pages.total}
+							onChange={(page) =>
+								setSearchParams({
+									page: page.toString(),
+									keyword: filterValue,
+									limit: limit,
+								})
+							}
+						/>
 					</div>
-				}
-				emptyContent={`Data Perkara tidak ditemukan `}
-				items={data.perkara}
-				className="overflow-y-scroll">
-				{(item) => (
-					<TableRow key={`anggota-item-${item.id}`}>
-						{(columnKey) => (
-							<TableCell>{renderCell(item, columnKey)}</TableCell>
-						)}
-					</TableRow>
-				)}
-			</TableBody>
-		</Table>
+				}>
+				<TableHeader columns={PerkaraHeaderTable}>
+					{(column) => (
+						<TableColumn key={column.key} align="start">
+							{column.label}
+						</TableColumn>
+					)}
+				</TableHeader>
+				<TableBody
+					isLoading={isLoadingData}
+					loadingContent={
+						<div className="bg-white rounded-xl shadow-md z-50">
+							<Spinner className="m-4" label="Loading data..." />
+						</div>
+					}
+					emptyContent={`Data Perkara tidak ditemukan `}
+					items={data.perkara}
+					className="overflow-y-scroll">
+					{(item) => (
+						<TableRow key={`anggota-item-${item.id}`}>
+							{(columnKey) => (
+								<TableCell>{renderCell(item, columnKey)}</TableCell>
+							)}
+						</TableRow>
+					)}
+				</TableBody>
+			</Table>
+		</>
 	);
 }
