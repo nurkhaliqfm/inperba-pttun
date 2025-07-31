@@ -1,6 +1,10 @@
 import axios, { AxiosError } from "axios";
 import type { ApiError, ApiResponse } from "@/types/global";
-import type { PerkaraRequest, PerkaraResponse } from "../types/perkara.type";
+import type {
+	PerkaraDetailResponse,
+	PerkaraRequest,
+	PerkaraResponse,
+} from "../types/perkara.type";
 
 const { VITE_SERVER_BASE_URL } = import.meta.env;
 
@@ -19,7 +23,7 @@ const getListPerkaraPagination = async ({
 }) => {
 	try {
 		const response = await axios.get(
-			`${VITE_SERVER_BASE_URL}/public/perkaras?page=${page}${
+			`${VITE_SERVER_BASE_URL}/admin/perkaras?page=${page}${
 				keyword ? `&keyword=${keyword}` : ""
 			}${limit ? `&limit=${limit}` : ""}`
 		);
@@ -53,7 +57,7 @@ const createPerkara = async ({
 }) => {
 	try {
 		const response = await axios.post(
-			`${VITE_SERVER_BASE_URL}/public/perkara/create`,
+			`${VITE_SERVER_BASE_URL}/admin/perkara/create`,
 			{ data: perkara }
 		);
 
@@ -91,7 +95,7 @@ const deletePerkara = async ({
 }) => {
 	try {
 		const response = await axios.get(
-			`${VITE_SERVER_BASE_URL}/public/perkara/delete?perkara=${perkara}`
+			`${VITE_SERVER_BASE_URL}/admin/perkara/delete?perkara=${perkara}`
 		);
 
 		if (onDone)
@@ -117,4 +121,42 @@ const deletePerkara = async ({
 	}
 };
 
-export { createPerkara, deletePerkara, getListPerkaraPagination };
+const getDetailPerkara = async ({
+	perkara,
+	onDone,
+	onError,
+}: {
+	perkara: string;
+	onDone?: (data: PerkaraDetailResponse) => void | undefined;
+	onError?: (data: ApiError) => void | undefined;
+}) => {
+	try {
+		const response = await axios.get(
+			`${VITE_SERVER_BASE_URL}/admin/perkara-detail?perkara=${perkara}`,
+			{}
+		);
+
+		if (onDone) onDone(response.data);
+	} catch (error) {
+		if (axios.isAxiosError(error)) {
+			const axiosError = error as AxiosError<ApiError>;
+			if (onError)
+				onError({
+					status: axiosError.response?.status || 500,
+					error: axiosError.response?.data.error || axiosError.message,
+				});
+			if (axiosError.response?.status === 401) {
+				localStorage.removeItem("authData");
+				window.location.reload();
+			}
+		}
+		throw error;
+	}
+};
+
+export {
+	createPerkara,
+	deletePerkara,
+	getDetailPerkara,
+	getListPerkaraPagination,
+};
