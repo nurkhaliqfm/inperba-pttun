@@ -41,6 +41,7 @@ const PerkaraHeaderTable: TableHeaderComponent[] = [
 	},
 	{ key: "para_pihak", label: "PARA PIHAK" },
 	{ key: "tanggal_hari_sidang", label: "SIDANG PUTUSAN" },
+	{ key: "amar_putusan", label: "AMAR PUTUSAN" },
 ];
 
 const PublicPerkaraPage = () => {
@@ -124,7 +125,6 @@ const PublicPerkaraPage = () => {
 								: "Belum Ditetapkan"}
 						</p>
 					);
-
 				case "jenis_perkara":
 				case "nomor_perkara":
 					return (
@@ -147,7 +147,16 @@ const PublicPerkaraPage = () => {
 							</div>
 						</div>
 					);
-
+				case "amar_putusan":
+					return (
+						<p
+							className={cn(
+								"text-sm capitalize whitespace-nowrap",
+								cellValue ? "font-bold" : "font-light italic"
+							)}>
+							{cellValue ? String(cellValue) : "Belum Ada Amar Putusan"}
+						</p>
+					);
 				default:
 					return String(cellValue ?? "");
 			}
