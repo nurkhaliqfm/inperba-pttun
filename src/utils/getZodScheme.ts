@@ -15,7 +15,6 @@ export const generateZodSchema = (fields: FieldConfig[]) => {
 			switch (field.type) {
 				case "text":
 				case "textarea":
-				case "email":
 					fieldSchema = z.string();
 					break;
 				case "textnospace":

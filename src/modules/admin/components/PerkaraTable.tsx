@@ -52,6 +52,7 @@ const PerkaraHeaderTable: TableHeaderComponent[] = [
 	},
 	{ key: "para_pihak", label: "PARA PIHAK" },
 	{ key: "tanggal_hari_sidang", label: "SIDANG PUTUSAN" },
+	{ key: "amar_putusan", label: "AMAR PUTUSAN" },
 	{ key: "actions", label: "ACTIONS" },
 ];
 
@@ -185,6 +186,16 @@ export function PerkaraTable({
 								<p className="font-bold">{perkara.terbanding}</p>
 							</div>
 						</div>
+					);
+				case "amar_putusan":
+					return (
+						<p
+							className={cn(
+								"text-sm capitalize whitespace-nowrap",
+								cellValue ? "font-medium" : "font-light italic"
+							)}>
+							{cellValue ? String(cellValue) : "Belum Ada Amar Putusan"}
+						</p>
 					);
 				case "actions":
 					return (

@@ -15,6 +15,7 @@ export interface PerkaraDetailResponse {
 	tanggal_penetapan_sidang: Date;
 	tanggal_penunjukan_panitera: Date;
 	tanggal_registrasi: Date;
+	amar_putusan: string | null;
 }
 
 export interface PerkaraRequest {
@@ -26,6 +27,7 @@ export interface PerkaraRequest {
 	terbanding: string;
 	tanggal_hari_sidang: Date | null;
 	status_proses: string;
+	amar_putusan: string | null;
 }
 
 export interface PerkaraResponse {

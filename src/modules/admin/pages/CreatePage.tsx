@@ -12,6 +12,7 @@ import {
 	Input,
 	Select,
 	SelectItem,
+	Textarea,
 	type DateValue,
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -164,6 +165,21 @@ const CreatePerkaraAdminPage = () => {
 							placeholder={`Pilih ${ff.label}`}>
 							{(item) => <SelectItem key={item.id}>{item.nama}</SelectItem>}
 						</Select>
+					) : name === "amar_putusan" ? (
+						<Textarea
+							key={name}
+							{...register(name)}
+							isRequired={ff.required}
+							className="max-w-lg"
+							variant="flat"
+							isClearable
+							labelPlacement="inside"
+							type="text"
+							label={ff.label}
+							size="lg"
+							errorMessage={errors[name]?.message}
+							isInvalid={!!errors[name]?.message}
+						/>
 					) : (
 						<Input
 							key={name}

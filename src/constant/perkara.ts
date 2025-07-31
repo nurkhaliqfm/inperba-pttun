@@ -42,6 +42,12 @@ export const PerkaraFieldConfig = [
 		required: false,
 	},
 	{
+		name: "amar_putusan",
+		label: "Amar Putusan",
+		type: "textarea",
+		required: true,
+	},
+	{
 		name: "status_proses",
 		label: "Status Proses",
 		type: "select",

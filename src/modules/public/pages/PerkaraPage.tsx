@@ -152,7 +152,7 @@ const PublicPerkaraPage = () => {
 						<p
 							className={cn(
 								"text-sm capitalize whitespace-nowrap",
-								cellValue ? "font-bold" : "font-light italic"
+								cellValue ? "font-medium" : "font-light italic"
 							)}>
 							{cellValue ? String(cellValue) : "Belum Ada Amar Putusan"}
 						</p>
