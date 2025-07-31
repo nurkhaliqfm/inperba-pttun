@@ -43,7 +43,7 @@ const CreatePerkaraAdminPage = () => {
 	});
 
 	function onSubmit(values: z.infer<typeof formZodSchema>) {
-		// setIsLoading(true);
+		setIsLoading(true);
 
 		const { jenis_perkara, status_proses, tanggal_hari_sidang, ...data } =
 			values;
