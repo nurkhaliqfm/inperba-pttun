@@ -12,28 +12,38 @@ import {
 	Input,
 	Select,
 	SelectItem,
+	Textarea,
 	type DateValue,
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { HiMiniPlus, HiPhone } from "react-icons/hi2";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type z from "zod";
-import { createPerkara } from "../service/perkaraService";
+import { getDetailPerkara, updatePerkara } from "../service/perkaraService";
 import { toast } from "react-toastify";
 import AppRoutes from "@/router/routes";
-import type { PerkaraRequest } from "../types/perkara.type";
+import type {
+	PerkaraDetailResponse,
+	PerkaraRequest,
+} from "../types/perkara.type";
+import dayjs from "dayjs";
+import { parseDate } from "@internationalized/date";
 
 const EditPerkaraAdminPage = () => {
 	const navigate = useNavigate();
-	const [isLoading, setIsLoading] = useState(false);
+	const { perkara } = useParams<{ perkara: string }>();
+
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [detailPerkaraData, setDetailPerkaraData] =
+		useState<PerkaraDetailResponse>();
 
 	const formZodSchema = generateZodSchema(PerkaraFieldConfig);
 
 	const {
+		reset,
 		control,
-		register,
 		handleSubmit,
 		formState: { errors },
 	} = useForm<z.infer<typeof formZodSchema>>({
@@ -61,40 +71,85 @@ const EditPerkaraAdminPage = () => {
 			...data,
 		} as PerkaraRequest;
 
-		createPerkara({
-			perkara: {
-				...perkaraDataCreate,
-				kontak_wa: `62${perkaraDataCreate.kontak_wa}`,
-			},
-			onDone: (data) => {
-				if (data.status === 201) {
-					toast.success(data.message, {
-						autoClose: 1000,
-						onClose: () => {
-							navigate(AppRoutes.AdminDashboard.path);
-						},
-					});
-				} else {
-					toast.error(data.message, {
+		if (detailPerkaraData) {
+			updatePerkara({
+				perkara: detailPerkaraData.id as number,
+				data: {
+					...perkaraDataCreate,
+					kontak_wa: `62${perkaraDataCreate.kontak_wa}`,
+				},
+				onDone: (data) => {
+					if (data.status === 200) {
+						toast.success(data.message, {
+							autoClose: 1000,
+							onClose: () => {
+								navigate(AppRoutes.AdminDashboard.path);
+							},
+						});
+					} else {
+						toast.error(data.message, {
+							theme: "colored",
+							autoClose: 1000,
+							onClose: () => {
+								setIsLoading(false);
+							},
+						});
+					}
+				},
+				onError: (error) => {
+					toast.error(error.error, {
 						theme: "colored",
 						autoClose: 1000,
 						onClose: () => {
 							setIsLoading(false);
 						},
 					});
-				}
-			},
-			onError: (error) => {
-				toast.error(error.error, {
-					theme: "colored",
-					autoClose: 1000,
-					onClose: () => {
-						setIsLoading(false);
-					},
-				});
-			},
-		});
+				},
+			});
+		}
 	}
+
+	useEffect(() => {
+		if (perkara) {
+			getDetailPerkara({
+				perkara: perkara,
+				onDone: (data) => {
+					setDetailPerkaraData(data);
+					if (formZodSchema) {
+						const selectedJenisPerkara = jenisPerkaraOptions.find(
+							(item) => item.nama === data.jenis_perkara
+						);
+						const selectedStatusProses = statusPerkaraOptions.find(
+							(item) => item.nama === data.status_proses
+						);
+
+						reset({
+							...(data as unknown as z.infer<typeof formZodSchema>),
+							kontak_wa: data.kontak_wa.replace("62", ""),
+							tanggal_registrasi: parseDate(
+								dayjs(data.tanggal_registrasi).format("YYYY-MM-DD")
+							),
+							tanggal_hari_sidang: data.tanggal_hari_sidang
+								? parseDate(
+										dayjs(data.tanggal_hari_sidang).format("YYYY-MM-DD")
+								  )
+								: null,
+							jenis_perkara: String(selectedJenisPerkara?.id) || "",
+							status_proses: String(selectedStatusProses?.id) || "",
+						});
+					}
+				},
+				onError: (error) => {
+					toast.error(error.error, {
+						theme: "colored",
+						autoClose: 1000,
+					});
+					setIsLoading(false);
+				},
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [perkara]);
 
 	return (
 		<main>
@@ -107,26 +162,37 @@ const EditPerkaraAdminPage = () => {
 				{PerkaraFieldConfig.map((ff) => {
 					const name = ff.name as keyof z.infer<typeof formZodSchema>;
 					return name === "kontak_wa" ? (
-						<Input
+						<Controller
 							key={name}
-							{...register(name)}
-							isRequired={ff.required}
-							className="max-w-lg"
-							variant="flat"
-							isClearable
-							labelPlacement="inside"
-							label={ff.label}
-							type="number"
-							onKeyDown={BlockInvalidInputChar}
-							startContent={
-								<p className="flex justify-center items-center gap-2">
-									<HiPhone className="pointer-events-none shrink-0" />
-									<span className="text-medium">+62</span>
-								</p>
-							}
-							size="lg"
-							errorMessage={errors[name]?.message}
-							isInvalid={!!errors[name]?.message}
+							name={name}
+							control={control}
+							rules={{ required: ff.required }}
+							render={({ field }) => (
+								<Input
+									isDisabled
+									key={name}
+									isRequired={ff.required}
+									className="max-w-lg"
+									variant="flat"
+									isClearable
+									labelPlacement="inside"
+									value={field.value as string}
+									onChange={field.onChange}
+									onBlur={field.onBlur}
+									label={ff.label}
+									type="number"
+									onKeyDown={BlockInvalidInputChar}
+									startContent={
+										<p className="flex justify-center items-center gap-2">
+											<HiPhone className="pointer-events-none shrink-0" />
+											<span className="text-medium">+62</span>
+										</p>
+									}
+									size="lg"
+									errorMessage={errors[name]?.message}
+									isInvalid={!!errors[name]?.message}
+								/>
+							)}
 						/>
 					) : name === "tanggal_registrasi" ||
 					  name === "tanggal_hari_sidang" ? (
@@ -149,35 +215,88 @@ const EditPerkaraAdminPage = () => {
 							)}
 						/>
 					) : name === "jenis_perkara" || name === "status_proses" ? (
-						<Select
+						<Controller
 							key={name}
-							{...register(name)}
-							isRequired={ff.required}
-							className="max-w-lg"
-							variant="flat"
-							items={
-								name === "jenis_perkara"
-									? jenisPerkaraOptions
-									: statusPerkaraOptions
-							}
-							label={ff.label}
-							placeholder={`Pilih ${ff.label}`}>
-							{(item) => <SelectItem key={item.id}>{item.nama}</SelectItem>}
-						</Select>
+							name={name}
+							control={control}
+							rules={{ required: ff.required }}
+							render={({ field }) => (
+								<Select
+									key={name}
+									isRequired={ff.required}
+									className="max-w-lg"
+									variant="flat"
+									items={
+										name === "jenis_perkara"
+											? jenisPerkaraOptions
+											: statusPerkaraOptions
+									}
+									label={ff.label}
+									placeholder={`Pilih ${ff.label}`}
+									onBlur={field.onBlur}
+									selectedKeys={
+										field.value !== undefined
+											? new Set([String(field.value)])
+											: new Set([])
+									}
+									onSelectionChange={(keys) => {
+										const selected = Array.from(keys)[0];
+										field.onChange(selected);
+									}}>
+									{(item) => <SelectItem key={item.id}>{item.nama}</SelectItem>}
+								</Select>
+							)}
+						/>
+					) : name === "amar_putusan" ? (
+						<Controller
+							key={name}
+							name={name}
+							control={control}
+							rules={{ required: ff.required }}
+							render={({ field }) => (
+								<Textarea
+									key={name}
+									isRequired={ff.required}
+									className="max-w-lg"
+									variant="flat"
+									isClearable
+									labelPlacement="inside"
+									type="text"
+									label={ff.label}
+									value={field.value as string}
+									onChange={field.onChange}
+									onBlur={field.onBlur}
+									size="lg"
+									errorMessage={errors[name]?.message}
+									isInvalid={!!errors[name]?.message}
+								/>
+							)}
+						/>
 					) : (
-						<Input
+						<Controller
 							key={name}
-							{...register(name)}
-							isRequired={ff.required}
-							className="max-w-lg"
-							variant="flat"
-							isClearable
-							labelPlacement="inside"
-							type="text"
-							label={ff.label}
-							size="lg"
-							errorMessage={errors[name]?.message}
-							isInvalid={!!errors[name]?.message}
+							name={name}
+							control={control}
+							rules={{ required: ff.required }}
+							render={({ field }) => (
+								<Input
+									isDisabled={name === "nomor_perkara"}
+									key={name}
+									isRequired={ff.required}
+									className="max-w-lg"
+									variant="flat"
+									isClearable
+									labelPlacement="inside"
+									value={field.value as string}
+									onChange={field.onChange}
+									onBlur={field.onBlur}
+									type="text"
+									label={ff.label}
+									size="lg"
+									errorMessage={errors[name]?.message}
+									isInvalid={!!errors[name]?.message}
+								/>
+							)}
 						/>
 					);
 				})}
@@ -211,7 +330,7 @@ const EditPerkaraAdminPage = () => {
 						color="success"
 						size="lg"
 						type="submit">
-						Simpan Perkara
+						Update Perkara
 					</Button>
 				</div>
 			</Form>

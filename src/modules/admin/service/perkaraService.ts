@@ -121,6 +121,46 @@ const deletePerkara = async ({
 	}
 };
 
+const updatePerkara = async ({
+	perkara,
+	data,
+	onDone,
+	onError,
+}: {
+	perkara: number;
+	data: PerkaraRequest;
+	onDone?: (data: ApiResponse) => void | undefined;
+	onError?: (data: ApiError) => void | undefined;
+}) => {
+	try {
+		const response = await axios.patch(
+			`${VITE_SERVER_BASE_URL}/admin/perkara/update?perkara=${perkara}`,
+			{ data: data }
+		);
+
+		if (onDone)
+			onDone({
+				status: response.status,
+				message:
+					response.data.message || "Perkara Information update successfully",
+			});
+	} catch (error) {
+		if (axios.isAxiosError(error)) {
+			const axiosError = error as AxiosError<ApiError>;
+			if (onError)
+				onError({
+					status: axiosError.response?.status || 500,
+					error: axiosError.response?.data.error || axiosError.message,
+				});
+			if (axiosError.response?.status === 401) {
+				localStorage.removeItem("authData");
+				window.location.reload();
+			}
+		}
+		throw error;
+	}
+};
+
 const getDetailPerkara = async ({
 	perkara,
 	onDone,
@@ -157,6 +197,7 @@ const getDetailPerkara = async ({
 export {
 	createPerkara,
 	deletePerkara,
+	updatePerkara,
 	getDetailPerkara,
 	getListPerkaraPagination,
 };
