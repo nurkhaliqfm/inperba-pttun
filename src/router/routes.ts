@@ -9,7 +9,7 @@ const AppRoutes = {
 		label: "Buat Informasi Perkara | INFO PUTUS PTTUN Makassar",
 	},
 	AdminEditPerkara: {
-		path: "/admin/edit-perkara/:slug",
+		path: "/admin/edit-perkara/:perkara",
 		label: "Edit Informasi Perkara | INFO PUTUS PTTUN Makassar",
 	},
 

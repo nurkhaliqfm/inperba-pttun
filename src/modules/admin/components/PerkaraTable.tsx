@@ -207,7 +207,7 @@ export function PerkaraTable({
 									onPress={() =>
 										navigate(
 											`${AppRoutes.AdminEditPerkara.path.replace(
-												":slug",
+												":perkara",
 												String(perkara.id)
 											)}`
 										)
