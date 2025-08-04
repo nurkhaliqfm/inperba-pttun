@@ -4,12 +4,11 @@ import { useOAuth } from "../store/useOAuth";
 import PublicLayout from "@/modules/public/components/layout/PublicLayout";
 
 const ProtectedRoutes = () => {
-	const authentication = useOAuth();
-	const role = authentication.auth.role;
+	const { auth } = useOAuth();
 	const location = useLocation();
 
-	if (location.pathname === "/admin") {
-		switch (role) {
+	if (auth && location.pathname === "/admin") {
+		switch (auth.role) {
 			case "Admin":
 				return <Navigate to={AppRoutes.AdminDashboard.path} />;
 			default:
