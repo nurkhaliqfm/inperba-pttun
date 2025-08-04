@@ -1,5 +1,6 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import sessionReducer from "@/modules/public/store/session.slice";
+import oauthReducer from "@/modules/auth/store/oauth.slice";
 import {
 	persistStore,
 	persistReducer,
@@ -16,12 +17,13 @@ const { VITE_NODE_ENV } = import.meta.env;
 
 const rootReducer = combineReducers({
 	sessions: sessionReducer,
+	oauths: oauthReducer,
 });
 
 const persistConfig = {
 	key: "root",
 	storage,
-	whitelist: ["sessions"],
+	whitelist: ["sessions", "oauths"],
 	devTools: VITE_NODE_ENV !== "production",
 };
 

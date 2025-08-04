@@ -4,6 +4,9 @@ import AppRoutes from "./routes";
 import Admin from "../modules/admin";
 import Public from "../modules/public";
 import PublicLayout from "@/modules/public/components/layout/PublicLayout";
+import AuthMiddleware from "@/modules/auth/middleware/AuthMiddleware";
+import ProtectedRoutes from "@/modules/auth/middleware/ProtectedRoutes";
+import Auth from "@/modules/auth";
 
 function AppRouter() {
 	return (
@@ -18,19 +21,27 @@ function AppRouter() {
 				element={<Error.ForbiddenPage />}
 			/>
 
+			{/* NOTE: Login Route */}
 			<Route element={<PublicLayout />}>
-				<Route
-					path={AppRoutes.AdminDashboard.path}
-					element={<Admin.DashboardAdminPage />}
-				/>
-				<Route
-					path={AppRoutes.AdminCreatePerkara.path}
-					element={<Admin.CreatePerkaraAdminPage />}
-				/>
-				<Route
-					path={AppRoutes.AdminEditPerkara.path}
-					element={<Admin.EditPerkaraAdminPage />}
-				/>
+				<Route path={AppRoutes.Login.path} element={<Auth.LoginPage />} />
+			</Route>
+
+			<Route element={<AuthMiddleware />}>
+				<Route path="/admin" element={<ProtectedRoutes />}>
+					{/* <Route element={<PublicLayout />}> */}
+					<Route
+						path={AppRoutes.AdminDashboard.path}
+						element={<Admin.DashboardAdminPage />}
+					/>
+					<Route
+						path={AppRoutes.AdminCreatePerkara.path}
+						element={<Admin.CreatePerkaraAdminPage />}
+					/>
+					<Route
+						path={AppRoutes.AdminEditPerkara.path}
+						element={<Admin.EditPerkaraAdminPage />}
+					/>
+				</Route>
 			</Route>
 
 			<Route element={<PublicLayout />}>
