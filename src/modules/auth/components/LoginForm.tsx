@@ -65,7 +65,7 @@ export function LoginForm() {
 		<Card className="py-4">
 			<CardBody className="grid p-0 md:grid-cols-2">
 				<div className="flex flex-col">
-					<div className="pt-2 px-4 flex-col text-center">
+					<div className="pt-2 pb-6 px-4 flex-col text-center">
 						<p className="text-2xl font-bold">Welcome Back</p>
 						<small className="text-medium text-gray-400">
 							Login to INFO-PUTUS PTTUN Makassar
@@ -73,7 +73,7 @@ export function LoginForm() {
 					</div>
 
 					<Form
-						className="justify-center items-center p-6 md:p-8 pt-0"
+						className="justify-center items-center pb-4 px-6 md:px-8 pt-0"
 						onSubmit={handleSubmit(onSubmit)}>
 						<Input
 							key={"username"}
