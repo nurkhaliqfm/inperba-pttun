@@ -18,9 +18,10 @@ import { logout } from "@/modules/auth/services/oauthService";
 import { toast } from "react-toastify";
 
 const PublicHeader = () => {
+	const navigate = useNavigate();
 	const location = useLocation();
 	const pathLocation = location.pathname.split("/")[1];
-	const navigate = useNavigate();
+
 	const [isScrolled, setIsScrolled] = useState(false);
 	const { auth, clear } = useOAuth();
 
@@ -103,7 +104,7 @@ const PublicHeader = () => {
 								className="text-danger"
 								color="danger"
 								onPress={onLogout}>
-								Logout
+								Log Out
 							</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>
