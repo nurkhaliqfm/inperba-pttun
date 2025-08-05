@@ -12,6 +12,10 @@ const AppRoutes = {
 		path: "/admin/edit-perkara/:perkara",
 		label: "Edit Informasi Perkara | INFO PUTUS PTTUN Makassar",
 	},
+	AdminResetPassword: {
+		path: "/admin/reset-password",
+		label: "Reset Password | INFO PUTUS PTTUN Makassar",
+	},
 
 	// NOTE: Public Route
 	PublicHome: {

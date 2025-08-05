@@ -28,7 +28,6 @@ function AppRouter() {
 
 			<Route element={<AuthMiddleware />}>
 				<Route path="/admin" element={<ProtectedRoutes />}>
-					{/* <Route element={<PublicLayout />}> */}
 					<Route
 						path={AppRoutes.AdminDashboard.path}
 						element={<Admin.DashboardAdminPage />}
@@ -40,6 +39,10 @@ function AppRouter() {
 					<Route
 						path={AppRoutes.AdminEditPerkara.path}
 						element={<Admin.EditPerkaraAdminPage />}
+					/>
+					<Route
+						path={AppRoutes.AdminResetPassword.path}
+						element={<Admin.ResetPasswordPage />}
 					/>
 				</Route>
 			</Route>

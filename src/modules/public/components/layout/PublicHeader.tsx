@@ -98,7 +98,11 @@ const PublicHeader = () => {
 								</DropdownItem>
 							)}
 
-							<DropdownItem key="setting">Setting</DropdownItem>
+							<DropdownItem
+								key="setting"
+								onPress={() => navigate(AppRoutes.AdminResetPassword.path)}>
+								Reset Password
+							</DropdownItem>
 							<DropdownItem
 								key="logout"
 								className="text-danger"

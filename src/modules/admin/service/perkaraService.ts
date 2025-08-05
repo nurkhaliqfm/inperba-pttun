@@ -5,6 +5,7 @@ import type {
 	PerkaraRequest,
 	PerkaraResponse,
 } from "../types/perkara.type";
+import axiosPrivate from "@/utils/axiosPrivate";
 
 const { VITE_SERVER_BASE_URL } = import.meta.env;
 
@@ -22,7 +23,7 @@ const getListPerkaraPagination = async ({
 	onError?: (data: ApiError) => void | undefined;
 }) => {
 	try {
-		const response = await axios.get(
+		const response = await axiosPrivate.get(
 			`${VITE_SERVER_BASE_URL}/admin/perkaras?page=${page}${
 				keyword ? `&keyword=${keyword}` : ""
 			}${limit ? `&limit=${limit}` : ""}`
@@ -56,7 +57,7 @@ const createPerkara = async ({
 	onError?: (data: ApiError) => void | undefined;
 }) => {
 	try {
-		const response = await axios.post(
+		const response = await axiosPrivate.post(
 			`${VITE_SERVER_BASE_URL}/admin/perkara/create`,
 			{ data: perkara }
 		);
@@ -94,7 +95,7 @@ const deletePerkara = async ({
 	onError?: (data: ApiError) => void | undefined;
 }) => {
 	try {
-		const response = await axios.get(
+		const response = await axiosPrivate.get(
 			`${VITE_SERVER_BASE_URL}/admin/perkara/delete?perkara=${perkara}`
 		);
 
@@ -133,7 +134,7 @@ const updatePerkara = async ({
 	onError?: (data: ApiError) => void | undefined;
 }) => {
 	try {
-		const response = await axios.patch(
+		const response = await axiosPrivate.patch(
 			`${VITE_SERVER_BASE_URL}/admin/perkara/update?perkara=${perkara}`,
 			{ data: data }
 		);
@@ -171,7 +172,7 @@ const getDetailPerkara = async ({
 	onError?: (data: ApiError) => void | undefined;
 }) => {
 	try {
-		const response = await axios.get(
+		const response = await axiosPrivate.get(
 			`${VITE_SERVER_BASE_URL}/admin/perkara-detail?perkara=${perkara}`,
 			{}
 		);
