@@ -3,10 +3,10 @@ import Error from "../modules/error";
 import AppRoutes from "./routes";
 import Admin from "../modules/admin";
 import Public from "../modules/public";
-import PublicLayout from "@/modules/public/components/layout/PublicLayout";
 import AuthMiddleware from "@/modules/auth/middleware/AuthMiddleware";
 import ProtectedRoutes from "@/modules/auth/middleware/ProtectedRoutes";
 import Auth from "@/modules/auth";
+import PublicLayout from "@/components/layout/Public";
 
 function AppRouter() {
 	return (

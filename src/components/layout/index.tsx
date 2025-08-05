@@ -1,7 +1,7 @@
-import BaseLayout from "./Base";
-import PageLayout from "./Dashboard";
+import DashboardLayout from "./Dashboard";
+import PublicLayout from "./Public";
 
 export default {
-	BaseLayout,
-	PageLayout,
+	DashboardLayout,
+	PublicLayout,
 };

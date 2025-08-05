@@ -1,7 +1,7 @@
 import { Navigate, useLocation } from "react-router-dom";
 import AppRoutes from "@/router/routes";
 import { useOAuth } from "../store/useOAuth";
-import PublicLayout from "@/modules/public/components/layout/PublicLayout";
+import DashboardLayout from "@/components/layout/Dashboard";
 
 const ProtectedRoutes = () => {
 	const { auth } = useOAuth();
@@ -16,7 +16,7 @@ const ProtectedRoutes = () => {
 		}
 	}
 
-	return <PublicLayout />;
+	return <DashboardLayout />;
 };
 
 export default ProtectedRoutes;
