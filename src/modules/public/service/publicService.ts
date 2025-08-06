@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import type { ApiError, ApiResponse } from "@/types/global";
 import { UAParser } from "ua-parser-js";
+import type { StatistikPerkaraResponse } from "../types/public.type";
 
 const { VITE_SERVER_BASE_URL, VITE_IDENTITY_HASH } = import.meta.env;
 
@@ -140,4 +141,39 @@ const getDetailPerkara = async ({
 	}
 };
 
-export { getOTPAccess, getOTPValidation, getDetailPerkara };
+const getStatistikPerkara = async ({
+	onDone,
+	onError,
+}: {
+	onDone?: (data: StatistikPerkaraResponse) => void | undefined;
+	onError?: (data: ApiError) => void | undefined;
+}) => {
+	try {
+		const response = await axios.get(
+			`${VITE_SERVER_BASE_URL}/public/perkara-statistik`
+		);
+
+		if (onDone) onDone(response.data);
+	} catch (error) {
+		if (axios.isAxiosError(error)) {
+			const axiosError = error as AxiosError<ApiError>;
+			if (onError)
+				onError({
+					status: axiosError.response?.status || 500,
+					error: axiosError.response?.data.error || axiosError.message,
+				});
+			if (axiosError.response?.status === 401) {
+				localStorage.removeItem("authData");
+				window.location.reload();
+			}
+		}
+		throw error;
+	}
+};
+
+export {
+	getOTPAccess,
+	getOTPValidation,
+	getDetailPerkara,
+	getStatistikPerkara,
+};

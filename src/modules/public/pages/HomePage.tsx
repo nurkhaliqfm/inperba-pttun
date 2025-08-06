@@ -1,24 +1,33 @@
 import SidangImage from "@/assets/img/sidang.svg";
-import { OTPFieldConfig } from "@/constant/public";
+import { ItemStatistik, OTPFieldConfig } from "@/constant/public";
 import { generateZodSchema } from "@/utils/getZodScheme";
 import { Button, Form, Image, Input } from "@heroui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { HiPhone, HiShieldCheck } from "react-icons/hi2";
-import { getOTPAccess } from "../service/publicService";
+import { getOTPAccess, getStatistikPerkara } from "../service/publicService";
 import { toast } from "react-toastify";
 import BlockInvalidInputChar from "@/utils/blockInvalidInput";
 import AppRoutes from "@/router/routes";
 import { WaPhoneConverter } from "@/utils/waPhoneConverter";
 import { useSession } from "../store/useSession";
 import type { OTPItemState } from "@/types/session";
+import type { StatistikPerkaraResponse } from "../types/public.type";
+import ItemStatistikPerkara from "../components/StatistikItem";
 
 const PublicHomePage = () => {
 	const navigate = useNavigate();
 	const [isLoading, setIsLoading] = useState(false);
+	const [statistikPerkara, setStatistikPerkara] =
+		useState<StatistikPerkaraResponse>({
+			perkara: 0,
+			putus: 0,
+			sisa: 0,
+			persentase: "0%",
+		});
 	const session = useSession();
 
 	const formZodSchema = generateZodSchema(OTPFieldConfig);
@@ -70,6 +79,14 @@ const PublicHomePage = () => {
 			},
 		});
 	}
+
+	useEffect(() => {
+		getStatistikPerkara({
+			onDone: (data) => {
+				setStatistikPerkara(data);
+			},
+		});
+	}, []);
 
 	return (
 		<section className="flex flex-col md:flex-row gap-4">
@@ -149,26 +166,13 @@ const PublicHomePage = () => {
 
 				<section className="flex justify-center">
 					<div className="grid grid-cols-2 gap-16">
-						<section className="flex flex-col gap-y-2 items-center text-public-secondary">
-							<p className="font-bold text-4xl">22</p>
-							<div className="h-0.5 w-6 bg-public-accent"></div>
-							<p className="text-xs font-thin">Perkara Terdaftar</p>
-						</section>
-						<section className="flex flex-col gap-y-2 items-center text-public-secondary">
-							<p className="font-bold text-4xl">16</p>
-							<div className="h-0.5 w-6 bg-public-accent"></div>
-							<p className="text-xs font-thin">Perkara Putus</p>
-						</section>
-						<section className="flex flex-col gap-y-2 items-center text-public-secondary">
-							<p className="font-bold text-4xl">22</p>
-							<div className="h-0.5 w-6 bg-public-accent"></div>
-							<p className="text-xs font-thin">Sisa Perkara</p>
-						</section>
-						<section className="flex flex-col gap-y-2 items-center text-public-secondary">
-							<p className="font-bold text-4xl">72.73%</p>
-							<div className="h-0.5 w-6 bg-public-accent"></div>
-							<p className="text-xs font-thin">Rasio Perkara</p>
-						</section>
+						{ItemStatistik.map((item) => (
+							<ItemStatistikPerkara
+								key={item.key}
+								value={statistikPerkara[item.key]}
+								title={item.name}
+							/>
+						))}
 					</div>
 				</section>
 			</section>
@@ -177,11 +181,11 @@ const PublicHomePage = () => {
 				<Image src={SidangImage} isZoomed loading="lazy" />
 				<p className="text-public-secondary text-center font-thin">
 					Kini, Anda tak perlu lagi menunggu dalam ketidakpastian.{" "}
-					<b>INPERBA</b> hadir sebagai solusi modern untuk memantau status dan
-					jadwal putusan perkara banding di PTTUN Makassar.{" "}
+					<b>INFO-PUTUS</b> hadir sebagai solusi modern untuk memantau status
+					dan jadwal putusan perkara banding di PTTUN Makassar.{" "}
 					<b>Cepat diakses, akurat, dan transparan</b> —{" "}
 					<i>
-						INPERBA mendekatkan keadilan kepada semua pihak yang membutuhkan.
+						INFO-PUTUS mendekatkan keadilan kepada semua pihak yang membutuhkan.
 					</i>
 				</p>
 			</aside>
