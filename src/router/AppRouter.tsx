@@ -22,9 +22,7 @@ function AppRouter() {
 			/>
 
 			{/* NOTE: Login Route */}
-			<Route element={<PublicLayout />}>
-				<Route path={AppRoutes.Login.path} element={<Auth.LoginPage />} />
-			</Route>
+			<Route path={AppRoutes.Login.path} element={<Auth.LoginPage />} />
 
 			<Route element={<AuthMiddleware />}>
 				<Route path="/admin" element={<ProtectedRoutes />}>
