@@ -1,4 +1,3 @@
-import SidangImage from "@/assets/img/sidang.svg";
 import { ItemStatistik, OTPFieldConfig } from "@/constant/public";
 import { generateZodSchema } from "@/utils/getZodScheme";
 import { Button, Form, Image, Input } from "@heroui/react";
@@ -17,6 +16,7 @@ import { useSession } from "../store/useSession";
 import type { OTPItemState } from "@/types/session";
 import type { StatistikPerkaraResponse } from "../types/public.type";
 import ItemStatistikPerkara from "../components/StatistikItem";
+import JudgeImage from "@/assets/img/judge-img.png";
 
 const PublicHomePage = () => {
 	const navigate = useNavigate();
@@ -178,7 +178,7 @@ const PublicHomePage = () => {
 			</section>
 
 			<aside className="flex flex-col max-w-[24rem] mx-auto">
-				<Image src={SidangImage} isZoomed loading="lazy" />
+				<Image src={JudgeImage} isZoomed loading="lazy" />
 				<p className="text-public-secondary text-center font-thin">
 					Kini, Anda tak perlu lagi menunggu dalam ketidakpastian.{" "}
 					<b>INFO-PUTUS</b> hadir sebagai solusi modern untuk memantau status

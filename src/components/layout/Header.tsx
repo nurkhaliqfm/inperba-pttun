@@ -64,7 +64,7 @@ const PublicHeader = () => {
 				"flex fixed z-50 justify-center h-16 w-full transition-all duration-150",
 				!isScrolled ? "bg-public-primary/0" : "bg-public-primary"
 			)}>
-			<div className="flex w-full justify-between items-center gap-2 px-4 py-9 max-w-6xl">
+			<div className="flex w-full justify-between items-center gap-2 px-4 pt-8 pb-11 max-w-6xl">
 				<Image
 					className="text-delivery-accent cursor-pointer"
 					src={Logo}
