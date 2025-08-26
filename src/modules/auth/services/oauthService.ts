@@ -1,5 +1,6 @@
 import axios from "axios";
 import type { OAuthData } from "../types/oauth.type";
+import axiosPrivate from "@/utils/axiosPrivate";
 
 interface CredentialsProps {
 	username: string;
@@ -51,10 +52,10 @@ const refresh = async (
 	}
 };
 
-const logout = async (token: string | undefined | null) => {
-	const response = await axios.get(VITE_SERVER_BASE_URL + "/oauth/logout", {
-		headers: { Authorization: `Bearer ${token}` },
-	});
+const logout = async () => {
+	const response = await axiosPrivate.get(
+		VITE_SERVER_BASE_URL + "/oauth/logout"
+	);
 
 	return response.status;
 };
