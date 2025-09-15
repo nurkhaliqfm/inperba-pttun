@@ -1,69 +1,164 @@
-# React + TypeScript + Vite
+# INPERBA PTTUN Makassar - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend aplikasi **INPERBA PTTUN Makassar**: Monitoring Informasi Perkara Banding.
 
-Currently, two official plugins are available:
+Dibangun dengan stack modern: **Bun**, **React**, **TypeScript**, **Vite**, **Hero UI**, **React Icons**, dan **Tailwind CSS**.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 🚀 Teknologi yang Digunakan
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **[Bun](https://bun.sh/):** Runtime, package manager, dan bundler super cepat
+- **[React](https://react.dev/):** Library UI modern
+- **[TypeScript](https://www.typescriptlang.org/):** Superset JavaScript dengan static typing
+- **[Vite](https://vitejs.dev/):** Alat pengembangan frontend generasi berikutnya
+- **[Tailwind CSS](https://tailwindcss.com/):** Framework utility-first CSS
+- **[Hero UI](https://www.heroui.com/):** Kumpulan komponen siap pakai untuk Tailwind CSS
+- **[React Icons](https://react-icons.github.io/react-icons/):** Kumpulan ikon populer berbasis React
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+## 🏁 Cara Menjalankan
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 1. Persyaratan
+
+- Sudah terinstal **Bun** (`curl -fsSL https://bun.sh/install | bash`)
+- (Opsional) Node.js jika butuh API Node
+
+### 2. Instalasi Dependensi
+
+```sh
+bun install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 3. Menjalankan Development Server
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```sh
+bun run dev
 ```
+
+Buka [http://localhost:5173](http://localhost:5173) di browser Anda.
+
+### 4. Build untuk Production
+
+```sh
+bun run build
+```
+
+### 5. Preview Hasil Build
+
+```sh
+bun run preview
+```
+
+---
+
+## 📦 Struktur Modul Project
+
+Struktur folder berdasarkan modularisasi fitur/layanan aplikasi (modular project structure):
+
+```
+src/
+├── modules/
+│   ├── auth/            # Modul autentikasi (login, register, otorisasi user)
+│   ├── perkara/         # Modul perkara banding (entri, detail, monitoring, dsb)
+│   ├── dashboard/       # Modul dashboard utama
+│   ├── user/            # Modul manajemen user/pengguna
+│   └── ...              # Modul-modul fitur lainnya
+├── components/          # Komponen global & re-usable
+├── layouts/             # Layout utama aplikasi
+├── hooks/               # Custom hooks (jika ada)
+├── utils/               # Utility/helper functions
+├── routes/              # Deklarasi route aplikasi (opsional, jika tidak di dalam modules)
+├── App.tsx              # Entry utama App
+└── main.tsx             # Entry point Vite
+```
+
+Dengan struktur ini, setiap fitur utama memiliki folder sendiri di dalam `src/modules`, berisi logika, komponen, dan resource terkait modul tersebut.
+
+---
+
+## 🎨 Menggunakan Hero UI & React Icons
+
+### Hero UI
+
+Hero UI menyediakan komponen siap pakai berbasis Tailwind CSS.
+
+Contoh penggunaan (lihat dokumentasi Hero UI untuk detail):
+
+```tsx
+import { Button } from '@heroui/react';
+
+export function ExampleButton() {
+  return (
+    <Button>
+      Simpan
+    </Button>
+  );
+}
+```
+
+### React Icons
+
+Install jika belum:
+
+```sh
+bun add react-icons
+```
+
+Contoh penggunaan di komponen:
+
+```tsx
+import { FaArrowRight } from 'react-icons/fa';
+
+export function ExampleButton() {
+  return (
+    <button className="flex items-center">
+      Next
+      <FaArrowRight className="w-5 h-5 ml-2" />
+    </button>
+  );
+}
+```
+
+---
+
+## 🛠️ Menggunakan Tailwind CSS
+
+Langsung tulis utility class di JSX:
+
+```tsx
+<div className="p-4 bg-blue-100 rounded-lg shadow">
+  Contoh dengan Tailwind!
+</div>
+```
+
+---
+
+## 📝 Scripts
+
+| Command           | Keterangan                              |
+|-------------------|-----------------------------------------|
+| `bun run dev`     | Menjalankan server development          |
+| `bun run build`   | Build untuk produksi                    |
+| `bun run preview` | Preview hasil build produksi            |
+
+---
+
+## 📚 Dokumentasi Referensi
+
+- [Bun Docs](https://bun.sh/docs)
+- [React Docs](https://react.dev/learn)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
+- [Vite Guide](https://vitejs.dev/guide/)
+- [Tailwind CSS Docs](https://tailwindcss.com/docs)
+- [Hero UI](https://www.heroui.com/)
+- [React Icons](https://react-icons.github.io/react-icons/)
+
+---
+
+## 🖊️ License
+
+MIT
+
+---
